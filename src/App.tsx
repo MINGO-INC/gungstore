@@ -28,19 +28,16 @@ const App = () => {
                 path={ROUTE_PATHS.HOME}
                 element={<Navigate to={`/employee/${EMPLOYEES[0].slug}`} replace />}
               />
-
               {/* Individual Employee Ledger Sheets */}
               <Route
                 path={ROUTE_PATHS.EMPLOYEE}
                 element={<EmployeePage />}
               />
-
               {/* Global Order History Sheet */}
               <Route
                 path={ROUTE_PATHS.ORDER_HISTORY}
                 element={<OrderHistory />}
               />
-
               {/* Catch-all route redirects to home */}
               <Route 
                 path="*" 

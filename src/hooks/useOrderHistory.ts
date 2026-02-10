@@ -1,10 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Order } from '@/lib/index';
-import { supabase } from '@/lib/supabase';
+import { Order, OrderItem } from '@/lib/index';
+import { supabase, isSupabaseAvailable } from '@/lib/supabase';
 import type { Json } from '@/lib/database.types';
 
 const STORAGE_KEY = 'tlca_order_history_v1';
 const STORAGE_EVENT = 'tlca_order_history_updated';
+
+/**
+ * Safely converts Order items to Json format for database storage
+ */
+function orderItemsToJson(items: OrderItem[]): Json {
+  return items as unknown as Json;
+}
+
+/**
+ * Safely converts database Json to OrderItem array
+ */
+function jsonToOrderItems(json: Json): OrderItem[] {
+  // Json is already parsed, just need to type assert
+  return json as unknown as OrderItem[];
+}
 
 /**
  * Custom hook for managing order history state with Supabase database persistence.
@@ -14,7 +29,7 @@ const STORAGE_EVENT = 'tlca_order_history_updated';
 export function useOrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [useOfflineMode, setUseOfflineMode] = useState(false);
+  const [useOfflineMode, setUseOfflineMode] = useState(!isSupabaseAvailable);
 
   // Initial load from Supabase (or localStorage if offline)
   useEffect(() => {
@@ -42,7 +57,7 @@ export function useOrderHistory() {
             employeeId: dbOrder.employee_id,
             employeeName: dbOrder.employee_name,
             customerType: dbOrder.customer_type,
-            items: dbOrder.items as Order['items'],
+            items: jsonToOrderItems(dbOrder.items),
             totalAmount: dbOrder.total_amount,
             totalCommission: dbOrder.total_commission,
             ledgerAmount: dbOrder.ledger_amount,
@@ -95,7 +110,7 @@ export function useOrderHistory() {
             employee_id: order.employeeId,
             employee_name: order.employeeName,
             customer_type: order.customerType,
-            items: order.items as unknown as Json,
+            items: orderItemsToJson(order.items),
             total_amount: order.totalAmount,
             total_commission: order.totalCommission,
             ledger_amount: order.ledgerAmount,

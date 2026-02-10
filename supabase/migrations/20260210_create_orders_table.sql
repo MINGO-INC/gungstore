@@ -22,8 +22,15 @@ CREATE INDEX IF NOT EXISTS idx_orders_timestamp ON orders(timestamp DESC);
 -- Enable Row Level Security
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
--- Create a policy that allows all operations for now
--- In production, you should restrict this based on user authentication
+-- ⚠️ WARNING: INSECURE DEFAULT POLICY - FOR DEVELOPMENT ONLY ⚠️
+-- This policy allows unrestricted access to all order data.
+-- BEFORE DEPLOYING TO PRODUCTION, you MUST:
+--   1. Implement proper user authentication (e.g., Supabase Auth)
+--   2. Replace this policy with authentication-based policies
+--   3. Restrict access based on user roles and permissions
+-- Example production policy (after implementing auth):
+--   CREATE POLICY "Users can only view their own orders" ON orders
+--     FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Allow all operations on orders" ON orders
   FOR ALL
   USING (true)

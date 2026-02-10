@@ -35,3 +35,7 @@ CREATE POLICY "Allow all operations on orders" ON orders
   FOR ALL
   USING (true)
   WITH CHECK (true);
+
+-- Enable real-time replication for the orders table
+-- This allows multiple users to see updates in real-time across different devices/browsers
+ALTER PUBLICATION supabase_realtime ADD TABLE orders;

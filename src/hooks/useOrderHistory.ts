@@ -98,6 +98,109 @@ export function useOrderHistory() {
     // Load initial data
     loadOrders();
 
+    // Setup real-time subscription for multi-user synchronization
+    let realtimeSubscription: ReturnType<typeof supabase.channel> | null = null;
+    
+    if (isSupabaseAvailable && supabase) {
+      // Subscribe to real-time changes on the orders table
+      realtimeSubscription = supabase
+        .channel('orders-channel')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'orders'
+          },
+          (payload) => {
+            console.log('TLCA Register: New order received via real-time subscription');
+            // Convert the new order from database format to Order format
+            const newDbOrder = payload.new;
+            const newOrder: Order = {
+              id: newDbOrder.id,
+              employeeId: newDbOrder.employee_id,
+              employeeName: newDbOrder.employee_name,
+              customerType: newDbOrder.customer_type,
+              items: jsonToOrderItems(newDbOrder.items),
+              totalAmount: newDbOrder.total_amount,
+              totalCommission: newDbOrder.total_commission,
+              ledgerAmount: newDbOrder.ledger_amount,
+              timestamp: newDbOrder.timestamp,
+            };
+            
+            // Add the new order to the state
+            setOrders((prevOrders) => {
+              // Check if order already exists (avoid duplicates)
+              const exists = prevOrders.some(order => order.id === newOrder.id);
+              if (exists) return prevOrders;
+              
+              const updatedOrders = [newOrder, ...prevOrders];
+              // Update localStorage as backup
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+              return updatedOrders;
+            });
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'orders'
+          },
+          (payload) => {
+            console.log('TLCA Register: Order deleted via real-time subscription');
+            const deletedId = payload.old.id;
+            
+            setOrders((prevOrders) => {
+              const updatedOrders = prevOrders.filter(order => order.id !== deletedId);
+              // Update localStorage as backup
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+              return updatedOrders;
+            });
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'orders'
+          },
+          (payload) => {
+            console.log('TLCA Register: Order updated via real-time subscription');
+            const updatedDbOrder = payload.new;
+            const updatedOrder: Order = {
+              id: updatedDbOrder.id,
+              employeeId: updatedDbOrder.employee_id,
+              employeeName: updatedDbOrder.employee_name,
+              customerType: updatedDbOrder.customer_type,
+              items: jsonToOrderItems(updatedDbOrder.items),
+              totalAmount: updatedDbOrder.total_amount,
+              totalCommission: updatedDbOrder.total_commission,
+              ledgerAmount: updatedDbOrder.ledger_amount,
+              timestamp: updatedDbOrder.timestamp,
+            };
+            
+            setOrders((prevOrders) => {
+              const updatedOrders = prevOrders.map(order => 
+                order.id === updatedOrder.id ? updatedOrder : order
+              );
+              // Update localStorage as backup
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+              return updatedOrders;
+            });
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('TLCA Register: Real-time subscription active - multi-user sync enabled');
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            console.warn('TLCA Register: Real-time subscription error, falling back to polling');
+          }
+        });
+    }
+
     // Listen for custom event when orders are updated
     const handleOrdersUpdated = () => {
       loadOrders();
@@ -107,6 +210,10 @@ export function useOrderHistory() {
 
     return () => {
       window.removeEventListener(STORAGE_EVENT, handleOrdersUpdated);
+      // Clean up real-time subscription
+      if (realtimeSubscription) {
+        supabase?.removeChannel(realtimeSubscription);
+      }
     };
   }, []);
 

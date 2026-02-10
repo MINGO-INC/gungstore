@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <script>
+      // GitHub Pages SPA redirect solution
+      // When a user navigates directly to a route (e.g., /history),
+      // GitHub Pages serves this 404.html. We capture the path and
+      // redirect to index.html with the path stored in sessionStorage,
+      // allowing React Router to handle the routing.
+      (function() {
+        var path = window.location.pathname;
+        var search = window.location.search;
+        var hash = window.location.hash;
+        
+        // Store the path for the main app to pick up
+        sessionStorage.setItem('redirect', path + search + hash);
+        
+        // Redirect to index.html
+        window.location.replace(
+          window.location.origin + '/index.html'
+        );
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>

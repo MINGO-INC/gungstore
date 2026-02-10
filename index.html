@@ -14,6 +14,17 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // GitHub Pages SPA redirect handler
+      // Check if we were redirected from a 404 page
+      (function() {
+        var redirect = sessionStorage.getItem('redirect');
+        if (redirect) {
+          sessionStorage.removeItem('redirect');
+          history.replaceState(null, '', redirect);
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -49,7 +49,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground px-2 py-0.5 border border-border rounded-full bg-muted/40">
             {product.category}
           </span>
-          <span className="font-mono text-base font-semibold text-secondary-foreground/80">
+          <span className="font-mono text-base font-semibold text-primary">
             ${product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
@@ -103,7 +103,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           
           <Button 
             onClick={handleAdd}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm border-t border-white/10 transition-all active:scale-[0.98] cursor-pointer"
+            className="w-full bg-[oklch(0.75_0.10_210)] hover:bg-[oklch(0.70_0.10_210)] text-white font-semibold shadow-sm border-t border-white/10 transition-all active:scale-[0.98] cursor-pointer"
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             Add to Cart

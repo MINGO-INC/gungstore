@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { OrderItem, CUSTOMER_TYPES } from '@/lib/index';
+import { OrderItem, CUSTOMER_TYPES, Order } from '@/lib/index';
 import {
   Receipt,
   User,
@@ -28,8 +28,10 @@ import {
   Landmark,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useOrderHistory } from '@/hooks/useOrderHistory';
 
 interface CartSummaryProps {
+  employeeId: string;
   employeeName: string;
   cartItems: OrderItem[];
   customerType: string;
@@ -39,6 +41,7 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({
+  employeeId,
   employeeName,
   cartItems,
   customerType,
@@ -46,6 +49,8 @@ export function CartSummary({
   onCheckout,
   onReset,
 }: CartSummaryProps) {
+  const { addOrder } = useOrderHistory();
+  
   const subtotal = cartItems.reduce((acc, item) => acc + (item.unitPrice * item.quantity), 0);
   const totalAmount = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
   const totalCommission = cartItems.reduce((acc, item) => acc + item.commission, 0);
@@ -58,6 +63,26 @@ export function CartSummary({
       style: 'currency',
       currency: 'USD',
     }).format(amount);
+
+  const handleCheckout = () => {
+    if (cartItems.length === 0) return;
+
+    // Create order object and add to history
+    const order: Order = {
+      id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      employeeId,
+      employeeName,
+      customerType,
+      items: cartItems,
+      totalAmount,
+      totalCommission,
+      ledgerAmount,
+      timestamp: new Date().toISOString(),
+    };
+
+    addOrder(order);
+    onCheckout();
+  };
 
   return (
     <Card className="border-border shadow-sm bg-card overflow-hidden sticky top-24">
@@ -154,7 +179,7 @@ export function CartSummary({
           size="lg"
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-14 shadow-lg active:scale-[0.98] transition-all"
           disabled={cartItems.length === 0}
-          onClick={onCheckout}
+          onClick={handleCheckout}
         >
           <CheckCircle2 className="w-5 h-5 mr-2" />
           CLOSE REGISTER & CHECKOUT

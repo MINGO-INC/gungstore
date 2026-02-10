@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function OrderHistory() {
-  const { orders, clearHistory, isLoading } = useOrderHistory();
+  const { orders, clearHistory, deleteOrder, isLoading } = useOrderHistory();
   const [searchQuery, setSearchQuery] = useState('');
   const [employeeFilter, setEmployeeFilter] = useState('all');
 
@@ -166,7 +166,7 @@ export default function OrderHistory() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <OrderHistoryTable orders={filteredOrders} />
+                <OrderHistoryTable orders={filteredOrders} onDeleteOrder={deleteOrder} />
               </motion.div>
             ) : (
               <motion.div 

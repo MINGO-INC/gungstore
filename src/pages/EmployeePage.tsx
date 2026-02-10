@@ -33,7 +33,7 @@ const EmployeePage: React.FC = () => {
     totals,
   } = useEmployeeCart();
 
-  const [activeCategory, setActiveCategory] = useState<string>('Long Arms');
+  const [activeCategory, setActiveCategory] = useState<string>('Pistols');
 
   // Combine regular products and specials for easy filtering
   const allAvailableProducts = useMemo(() => [...PRODUCTS, ...SPECIALS], []);
@@ -47,14 +47,14 @@ const EmployeePage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const categories = ['Long Arms', 'Side Arms', 'Ammo & Accessories', 'Specials'];
+  const categories = ['Pistols', 'Revolvers', 'Rifles', 'Shotguns', 'Repeaters', 'Consumables', 'Specials'];
 
   const handleCheckout = () => {
     // The CartSummary component handles the data persistence to order history internally
     // by using the useOrderHistory hook to add the completed order.
     // This callback handles the page reset and visual feedback.
     resetCart();
-    setActiveCategory('Long Arms');
+    setActiveCategory('Pistols');
   };
 
   return (
@@ -82,7 +82,7 @@ const EmployeePage: React.FC = () => {
           </header>
 
           <Tabs 
-            defaultValue="Long Arms" 
+            defaultValue="Pistols" 
             onValueChange={setActiveCategory}
             className="w-full space-y-8"
           >

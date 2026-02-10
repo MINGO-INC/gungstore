@@ -25,10 +25,11 @@ Manages the complete inventory of firearms, ammunition, and accessories.
 - Pre-populated with initial product data
 
 ### 3. **employees** - Staff Management
-Tracks all store employees who can process sales.
-- Unique slug for employee-specific sales pages
-- Active/inactive status for staff management
-- Pre-populated with initial employee data
+Stores minimal employee information for sales tracking.
+- Simple structure with only id, name, and slug
+- Unique slug for employee-specific sales pages (/employee/cat)
+- Sales tracking handled in orders table
+- Pre-populated with 5 employees
 
 ### 4. **inventory_transactions** (Optional)
 Advanced inventory tracking for stock movements.

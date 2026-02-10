@@ -1,21 +1,14 @@
 -- Create employees table for staff management
+-- Simplified to only store essential employee information
+-- Sales tracking is handled in the orders table
 CREATE TABLE IF NOT EXISTS employees (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  email TEXT,
-  phone TEXT,
-  is_active BOOLEAN DEFAULT true,
-  hire_date DATE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  slug TEXT UNIQUE NOT NULL
 );
 
 -- Create index on slug for faster lookup
 CREATE INDEX IF NOT EXISTS idx_employees_slug ON employees(slug);
-
--- Create index on active status for filtering
-CREATE INDEX IF NOT EXISTS idx_employees_active ON employees(is_active);
 
 -- Enable Row Level Security
 ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
@@ -39,10 +32,10 @@ CREATE POLICY "Allow all operations on employees" ON employees
 ALTER PUBLICATION supabase_realtime ADD TABLE employees;
 
 -- Insert initial employees data
-INSERT INTO employees (id, name, slug, is_active) VALUES
-  ('emp_1', 'Cat', 'cat', true),
-  ('emp_2', 'Tom', 'tom', true),
-  ('emp_3', 'Rob', 'rob', true),
-  ('emp_4', 'Morris', 'morris', true),
-  ('emp_5', 'Extra', 'extra', true)
+INSERT INTO employees (id, name, slug) VALUES
+  ('emp_1', 'Cat', 'cat'),
+  ('emp_2', 'Tom', 'tom'),
+  ('emp_3', 'Rob', 'rob'),
+  ('emp_4', 'Morris', 'morris'),
+  ('emp_5', 'Extra', 'extra')
 ON CONFLICT (id) DO NOTHING;

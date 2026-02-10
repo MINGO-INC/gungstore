@@ -79,9 +79,9 @@ After running the migrations:
 ## What You Just Created
 
 ### Database Tables
-- **orders** - Stores all completed sales transactions
+- **orders** - Stores all completed sales transactions with employee tracking
 - **products** - Complete catalog of firearms and accessories
-- **employees** - Staff members who can process sales
+- **employees** - Minimal employee data (id, name, slug) for routing and sales
 - **inventory_transactions** - Track stock movements (optional)
 
 ### Pre-loaded Data

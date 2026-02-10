@@ -158,17 +158,21 @@ is_special: false
 ```
 
 ### 3. EMPLOYEES (Staff Management)
-**Purpose:** Tracks store employees who can process sales.
+**Purpose:** Stores minimal employee information for sales tracking and routing.
 
 **Key Features:**
+- Simplified structure with only essential fields
 - Unique slug for URL routing (e.g., /employee/cat)
-- Active/inactive status management
-- Optional contact information
+- Sales tracking handled in orders table
 - 5 pre-loaded employees
+
+**Fields:**
+- `id` - Unique employee identifier
+- `name` - Employee name for display
+- `slug` - URL-friendly identifier for routing
 
 **Indexes:**
 - `idx_employees_slug` - Fast URL slug lookups
-- `idx_employees_active` - Filter active employees
 
 **Pre-loaded Employees:**
 - Cat (emp_1, slug: cat)
@@ -176,6 +180,8 @@ is_special: false
 - Rob (emp_3, slug: rob)
 - Morris (emp_4, slug: morris)
 - Extra (emp_5, slug: extra)
+
+**Note:** Employee sales are tracked in the `orders` table with `employee_id` and `employee_name` fields. The orders table provides complete sales history including items, amounts, commissions, and timestamps.
 
 ### 4. INVENTORY_TRANSACTIONS (Stock Tracking)
 **Purpose:** Optional advanced inventory tracking for stock movements.

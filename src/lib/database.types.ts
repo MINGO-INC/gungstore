@@ -93,34 +93,16 @@ export interface Database {
           id: string
           name: string
           slug: string
-          email: string | null
-          phone: string | null
-          is_active: boolean
-          hire_date: string | null
-          created_at: string
-          updated_at: string
         }
         Insert: {
           id: string
           name: string
           slug: string
-          email?: string | null
-          phone?: string | null
-          is_active?: boolean
-          hire_date?: string | null
-          created_at?: string
-          updated_at?: string
         }
         Update: {
           id?: string
           name?: string
           slug?: string
-          email?: string | null
-          phone?: string | null
-          is_active?: boolean
-          hire_date?: string | null
-          created_at?: string
-          updated_at?: string
         }
       }
       inventory_transactions: {

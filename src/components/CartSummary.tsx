@@ -175,6 +175,7 @@ export function CartSummary({
                       size="icon"
                       className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                       onClick={() => onRemoveItem(item.productId)}
+                      aria-label={`Remove ${item.name} from cart`}
                     >
                       <X className="w-4 h-4" />
                     </Button>

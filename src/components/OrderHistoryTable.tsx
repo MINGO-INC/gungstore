@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Order } from '@/lib/index';
 import {
   Table,
@@ -10,10 +10,22 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { History, User, CreditCard, DollarSign, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { History, User, CreditCard, DollarSign, Calendar, Trash2 } from 'lucide-react';
 
 interface OrderHistoryTableProps {
   orders: Order[];
+  onDeleteOrder?: (orderId: string) => void;
 }
 
 /**
@@ -21,7 +33,10 @@ interface OrderHistoryTableProps {
  * Displays completed transactions in a vintage ledger format.
  * © 2026 TLCA Inventory Systems
  */
-export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
+export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTableProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -36,6 +51,19 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
       hour: '2-digit',
       minute: '2-digit',
     });
+
+  const handleDeleteClick = (order: Order) => {
+    setOrderToDelete(order);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (orderToDelete && onDeleteOrder) {
+      onDeleteOrder(orderToDelete.id);
+    }
+    setDeleteDialogOpen(false);
+    setOrderToDelete(null);
+  };
 
   if (orders.length === 0) {
     return (
@@ -79,6 +107,7 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
               </TableHead>
               <TableHead className="text-right font-semibold text-accent-foreground">Comm. (25%)</TableHead>
               <TableHead className="text-right font-semibold text-secondary-foreground bg-secondary/5">Ledger (75%)</TableHead>
+              <TableHead className="w-[80px] font-semibold">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,6 +133,17 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
                 <TableCell className="text-right font-mono font-bold text-secondary bg-secondary/5">
                   {formatCurrency(order.ledgerAmount)}
                 </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleDeleteClick(order)}
+                    title="Delete this sale"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -128,6 +168,34 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
           </div>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Sale?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this sale? This action cannot be undone.
+              {orderToDelete && (
+                <div className="mt-4 p-3 bg-muted rounded-md space-y-1">
+                  <p className="text-sm font-medium text-foreground">Order Details:</p>
+                  <p className="text-xs text-muted-foreground">Date: {orderToDelete.timestamp ? formatDate(orderToDelete.timestamp) : 'N/A'}</p>
+                  <p className="text-xs text-muted-foreground">Employee: {orderToDelete.employeeName}</p>
+                  <p className="text-xs text-muted-foreground">Total: {formatCurrency(orderToDelete.totalAmount)}</p>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Sale
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

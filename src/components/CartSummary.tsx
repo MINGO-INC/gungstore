@@ -20,7 +20,6 @@ import { OrderItem, CUSTOMER_TYPES, Order } from '@/lib/index';
 import {
   Receipt,
   User,
-  Wallet,
   Gavel,
   RotateCcw,
   CheckCircle2,

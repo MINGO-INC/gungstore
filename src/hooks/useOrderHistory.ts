@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Order } from '@/lib/index';
 
 const STORAGE_KEY = 'tlca_order_history_v1';
+const STORAGE_EVENT = 'tlca_order_history_updated';
 
 /**
  * Custom hook for managing order history state with localStorage persistence.
@@ -11,14 +12,13 @@ export function useOrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initial load from localStorage
+  // Initial load from localStorage and listen for updates
   useEffect(() => {
-    const loadHistory = () => {
+    const loadOrders = () => {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const parsedOrders = JSON.parse(saved);
-          // Ensure dates are handled correctly if needed, though they are stored as strings in the Order interface
           setOrders(parsedOrders);
         }
       } catch (error) {
@@ -28,7 +28,19 @@ export function useOrderHistory() {
       }
     };
 
-    loadHistory();
+    // Load initial data
+    loadOrders();
+
+    // Listen for custom event when orders are updated
+    const handleOrdersUpdated = () => {
+      loadOrders();
+    };
+
+    window.addEventListener(STORAGE_EVENT, handleOrdersUpdated);
+
+    return () => {
+      window.removeEventListener(STORAGE_EVENT, handleOrdersUpdated);
+    };
   }, []);
 
   /**
@@ -40,6 +52,8 @@ export function useOrderHistory() {
       
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new Event(STORAGE_EVENT));
       } catch (error) {
         console.error('TLCA Register: Failed to write transaction to local ledger.', error);
       }
@@ -55,6 +69,8 @@ export function useOrderHistory() {
     setOrders([]);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new Event(STORAGE_EVENT));
     } catch (error) {
       console.error('TLCA Register: Failed to clear ledger.', error);
     }

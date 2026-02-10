@@ -54,14 +54,20 @@ The application uses Supabase to store order history permanently and enable real
    ```
    💡 **Need help with this step?** See the detailed explanation in [CLOUD_SETUP_GUIDE.md - Step 3](CLOUD_SETUP_GUIDE.md#step-3-configure-your-app)
    
-4. Run the database migration:
-   - In Supabase dashboard, go to **SQL Editor**
-   - Copy and paste the SQL from `supabase/migrations/20260210_create_orders_table.sql`
-   - Click **Run**
+4. **Create the database tables:**
+   - **Quick Start:** Follow the [5-minute setup guide](supabase/QUICK_START.md) 🚀
+   - **Detailed Instructions:** See [supabase/README.md](supabase/README.md) for complete documentation
+   
+   You'll create these tables:
+   - ✅ `orders` - Order history (REQUIRED)
+   - ✅ `products` - 48 pre-loaded firearms & accessories (RECOMMENDED)
+   - ✅ `employees` - 5 staff members (RECOMMENDED)
+   - ✅ `inventory_transactions` - Stock tracking (OPTIONAL)
 
 **That's it!** Your sales are now saved in the cloud permanently. 🎉
 
 **Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (single-user, temporary storage).
+
 
 ## Development
 

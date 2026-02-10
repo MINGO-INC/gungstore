@@ -35,6 +35,20 @@ export function useOrderHistory() {
   useEffect(() => {
     const loadOrders = async () => {
       try {
+        // Check if Supabase is available before trying to use it
+        if (!isSupabaseAvailable) {
+          console.log('TLCA Register: Supabase not configured, using offline mode.');
+          setUseOfflineMode(true);
+          // Load from localStorage
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const parsedOrders = JSON.parse(saved);
+            setOrders(parsedOrders);
+          }
+          setIsLoading(false);
+          return;
+        }
+
         // Try to load from Supabase first
         const { data, error } = await supabase
           .from('orders')

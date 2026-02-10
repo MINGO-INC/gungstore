@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Order } from '@/lib/index';
 import { supabase } from '@/lib/supabase';
+import type { Json } from '@/lib/database.types';
 
 const STORAGE_KEY = 'tlca_order_history_v1';
 const STORAGE_EVENT = 'tlca_order_history_updated';
@@ -84,8 +85,6 @@ export function useOrderHistory() {
    * Adds a new order to the history and persists to Supabase (or localStorage if offline).
    */
   const addOrder = useCallback(async (order: Order) => {
-    const updatedOrders = [order, ...orders];
-    
     try {
       if (!useOfflineMode) {
         // Try to save to Supabase
@@ -96,7 +95,7 @@ export function useOrderHistory() {
             employee_id: order.employeeId,
             employee_name: order.employeeName,
             customer_type: order.customerType,
-            items: order.items as any,
+            items: order.items as unknown as Json,
             total_amount: order.totalAmount,
             total_commission: order.totalCommission,
             ledger_amount: order.ledgerAmount,
@@ -112,19 +111,27 @@ export function useOrderHistory() {
         }
       }
       
-      // Always save to localStorage as backup
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
-      setOrders(updatedOrders);
+      // Update state and localStorage using functional form to avoid race conditions
+      setOrders((prevOrders) => {
+        const updatedOrders = [order, ...prevOrders];
+        // Always save to localStorage as backup
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+        return updatedOrders;
+      });
+      
       // Dispatch custom event to notify other components
       window.dispatchEvent(new Event(STORAGE_EVENT));
     } catch (error) {
       console.error('TLCA Register: Failed to save order.', error);
-      // Ensure localStorage fallback
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
-      setOrders(updatedOrders);
+      // Ensure localStorage fallback using functional state update
+      setOrders((prevOrders) => {
+        const updatedOrders = [order, ...prevOrders];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+        return updatedOrders;
+      });
       window.dispatchEvent(new Event(STORAGE_EVENT));
     }
-  }, [orders, useOfflineMode]);
+  }, [useOfflineMode]);
 
   /**
    * Completely wipes the history from state and storage (both database and localStorage).
@@ -185,21 +192,26 @@ export function useOrderHistory() {
         }
       }
       
-      // Always remove from state and localStorage
-      const updatedOrders = orders.filter(order => order.id !== id);
-      setOrders(updatedOrders);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+      // Update state and localStorage using functional form to avoid race conditions
+      setOrders((prevOrders) => {
+        const updatedOrders = prevOrders.filter(order => order.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+        return updatedOrders;
+      });
+      
       // Dispatch custom event to notify other components
       window.dispatchEvent(new Event(STORAGE_EVENT));
     } catch (error) {
       console.error('TLCA Register: Failed to delete order.', error);
-      // Delete locally anyway
-      const updatedOrders = orders.filter(order => order.id !== id);
-      setOrders(updatedOrders);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+      // Delete locally anyway using functional state update
+      setOrders((prevOrders) => {
+        const updatedOrders = prevOrders.filter(order => order.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+        return updatedOrders;
+      });
       window.dispatchEvent(new Event(STORAGE_EVENT));
     }
-  }, [orders, useOfflineMode]);
+  }, [useOfflineMode]);
 
   return {
     orders,

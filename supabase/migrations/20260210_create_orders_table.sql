@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS orders (
   total_amount DECIMAL(10, 2) NOT NULL,
   total_commission DECIMAL(10, 2) NOT NULL,
   ledger_amount DECIMAL(10, 2) NOT NULL,
-  timestamp TEXT NOT NULL,
+  timestamp TEXT NOT NULL, -- ISO 8601 format (YYYY-MM-DDTHH:MM:SS.sssZ) for correct chronological sorting
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS orders (
 -- Create index on employee_id for faster queries
 CREATE INDEX IF NOT EXISTS idx_orders_employee_id ON orders(employee_id);
 
--- Create index on timestamp for faster date-based queries
+-- Create index on timestamp for faster date-based queries (ISO 8601 TEXT sorts chronologically)
 CREATE INDEX IF NOT EXISTS idx_orders_timestamp ON orders(timestamp DESC);
 
 -- Enable Row Level Security

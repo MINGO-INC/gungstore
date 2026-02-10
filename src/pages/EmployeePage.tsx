@@ -29,6 +29,7 @@ const EmployeePage: React.FC = () => {
     customerType,
     setCustomerType,
     addToCart,
+    removeFromCart,
     resetCart,
     totals,
   } = useEmployeeCart();
@@ -145,6 +146,7 @@ const EmployeePage: React.FC = () => {
               onCustomerTypeChange={setCustomerType}
               onCheckout={handleCheckout}
               onReset={resetCart}
+              onRemoveItem={removeFromCart}
             />
             
             {/* Additional Ledger Context */}

@@ -25,6 +25,8 @@ import {
   CheckCircle2,
   BadgePercent,
   Landmark,
+  X,
+  ShoppingCart,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
@@ -37,6 +39,7 @@ interface CartSummaryProps {
   onCustomerTypeChange: (type: string) => void;
   onCheckout: () => void;
   onReset: () => void;
+  onRemoveItem: (productId: string) => void;
 }
 
 export function CartSummary({
@@ -47,6 +50,7 @@ export function CartSummary({
   onCustomerTypeChange,
   onCheckout,
   onReset,
+  onRemoveItem,
 }: CartSummaryProps) {
   const { addOrder } = useOrderHistory();
   
@@ -116,6 +120,70 @@ export function CartSummary({
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <Separator className="opacity-50" />
+
+        {/* Cart Items List */}
+        <div className="space-y-3">
+          <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+            <ShoppingCart className="w-3 h-3" />
+            Items in Cart
+          </label>
+          
+          {cartItems.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground text-sm border border-dashed border-border rounded-lg">
+              No items added yet
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+              <AnimatePresence mode="popLayout">
+                {cartItems.map((item) => (
+                  <motion.div
+                    key={item.productId}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-background/50 border border-border rounded-lg p-3 flex items-start justify-between gap-2 hover:bg-background/80 transition-colors"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-medium text-sm text-foreground truncate">
+                          {item.name}
+                        </span>
+                        <span className="text-xs font-mono text-muted-foreground shrink-0">
+                          ×{item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs font-mono text-muted-foreground">
+                          {formatCurrency(item.unitPrice)} ea.
+                        </span>
+                        {item.discountedPrice < item.unitPrice && (
+                          <Badge variant="secondary" className="text-[10px] px-1 py-0">
+                            -{Math.round((1 - item.discountedPrice / item.unitPrice) * 100)}%
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-sm font-semibold text-foreground mt-1">
+                        {formatCurrency(item.totalPrice)}
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => onRemoveItem(item.productId)}
+                      aria-label={`Remove ${item.name} from cart`}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
 
         <Separator className="opacity-50" />

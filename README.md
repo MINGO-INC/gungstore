@@ -11,7 +11,13 @@ npm install
 
 ### 2. Configure Supabase (for persistent order history)
 
-The application uses Supabase to store order history permanently. Without Supabase, orders will only be saved locally in the browser.
+The application uses Supabase to store order history permanently and enable real-time synchronization across multiple users. Without Supabase, orders will only be saved locally in the browser.
+
+**Benefits of Supabase integration:**
+- 🌐 **Multi-user synchronization**: When one user adds an order, all other users see it in real-time
+- 💾 **Persistent storage**: Orders are saved permanently in the cloud
+- 🔄 **Cross-device access**: Access the same order history from any device
+- 📱 **Offline support**: App continues working offline, syncs when connection is restored
 
 1. Create a Supabase project at [supabase.com](https://supabase.com)
 2. Copy `.env.example` to `.env`:
@@ -29,7 +35,7 @@ The application uses Supabase to store order history permanently. Without Supaba
 
 For detailed Supabase setup instructions, see [supabase/README.md](supabase/README.md).
 
-**Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (temporary storage).
+**Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (single-user, temporary storage).
 
 ## Development
 

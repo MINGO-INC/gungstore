@@ -1,7 +1,13 @@
 # Supabase Setup for TLCA Gun Register
 
 ## Overview
-This application uses Supabase for persistent order history storage.
+This application uses Supabase for persistent order history storage with **real-time synchronization** across multiple users.
+
+### Key Features
+- **Real-time Multi-user Sync**: When one user adds an order, all other users see it instantly
+- **Persistent Cloud Storage**: Orders are saved permanently in PostgreSQL database
+- **Cross-device Access**: Access the same order history from any device or browser
+- **Offline Fallback**: App continues working when offline, syncs when connection is restored
 
 ## Setup Instructions
 
@@ -53,7 +59,25 @@ The `orders` table includes:
 - `created_at`: Database creation timestamp
 - `updated_at`: Last update timestamp
 
-### 5. Security
+The table is configured with **real-time replication** enabled, allowing instant synchronization of order data across all connected users.
+
+### 5. Real-time Synchronization
+
+The application uses Supabase real-time subscriptions to synchronize order history across multiple users:
+
+- **INSERT events**: When a new order is added, all users see it instantly
+- **DELETE events**: When an order is deleted, it's removed from all users' views
+- **UPDATE events**: When an order is modified, all users see the changes immediately
+
+This enables multiple employees to use the system simultaneously while seeing the same up-to-date order history.
+
+**How it works:**
+1. User A adds a new order → saved to Supabase database
+2. Supabase broadcasts the INSERT event to all subscribed clients
+3. User B, C, and D instantly see the new order appear in their history tab
+4. No page refresh required!
+
+### 6. Security
 The default migration enables Row Level Security (RLS) with a permissive policy. For production use, you should:
 - Implement user authentication
 - Create proper RLS policies based on user roles

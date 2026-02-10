@@ -2,6 +2,19 @@
 
 A Vite + React + TypeScript application with TailwindCSS and Shadcn UI components.
 
+## ⚠️ Important: Cloud Storage Setup
+
+**Question: "Does this save sales in the cloud so I can see them days later?"**
+
+**Answer: YES, but you need to configure Supabase first!**
+
+- ✅ **With Supabase:** Sales saved permanently in cloud, accessible from anywhere, multi-user real-time sync
+- ❌ **Without Supabase:** Sales only saved in browser (temporary, single-user)
+
+**👉 See [CLOUD_SETUP_GUIDE.md](CLOUD_SETUP_GUIDE.md) for step-by-step setup (5-10 minutes, FREE)**
+
+---
+
 ## Setup
 
 ### 1. Install dependencies:
@@ -9,27 +22,46 @@ A Vite + React + TypeScript application with TailwindCSS and Shadcn UI component
 npm install
 ```
 
-### 2. Configure Supabase (for persistent order history)
+### 2. Configure Supabase (RECOMMENDED for persistent cloud storage)
 
-The application uses Supabase to store order history permanently. Without Supabase, orders will only be saved locally in the browser.
+**Why you need this:**
+- 💾 Sales data saved permanently (come back days/weeks/months later)
+- 🌐 Multiple users can see the same data in real-time
+- 📱 Access from any device or browser
+- ☁️ Never lose data even if browser cache is cleared
+
+The application uses Supabase to store order history permanently and enable real-time synchronization across multiple users. Without Supabase, orders will only be saved locally in the browser.
+
+**Benefits of Supabase integration:**
+- 🌐 **Multi-user synchronization**: When one user adds an order, all other users see it in real-time
+- 💾 **Persistent storage**: Orders are saved permanently in the cloud
+- 🔄 **Cross-device access**: Access the same order history from any device
+- 📱 **Offline support**: App continues working offline, syncs when connection is restored
+
+**📖 For detailed step-by-step setup instructions, see [CLOUD_SETUP_GUIDE.md](CLOUD_SETUP_GUIDE.md)**
+
+**Quick Setup:**
 
 1. Create a Supabase project at [supabase.com](https://supabase.com)
 2. Copy `.env.example` to `.env`:
    ```bash
    cp .env.example .env
    ```
-3. Add your Supabase credentials to `.env`:
+3. Add your Supabase credentials to `.env` (replace the placeholder values):
    ```env
    VITE_SUPABASE_URL=https://your-project-ref.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key-here
    ```
-4. Run the database migration (see `supabase/README.md` for details):
-   - Option A: Use Supabase CLI to run migrations
-   - Option B: Manually run the SQL from `supabase/migrations/20260210_create_orders_table.sql` in the Supabase SQL Editor
+   💡 **Need help with this step?** See the detailed explanation in [CLOUD_SETUP_GUIDE.md - Step 3](CLOUD_SETUP_GUIDE.md#step-3-configure-your-app)
+   
+4. Run the database migration:
+   - In Supabase dashboard, go to **SQL Editor**
+   - Copy and paste the SQL from `supabase/migrations/20260210_create_orders_table.sql`
+   - Click **Run**
 
-For detailed Supabase setup instructions, see [supabase/README.md](supabase/README.md).
+**That's it!** Your sales are now saved in the cloud permanently. 🎉
 
-**Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (temporary storage).
+**Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (single-user, temporary storage).
 
 ## Development
 

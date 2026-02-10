@@ -2,12 +2,36 @@
 
 A Vite + React + TypeScript application with TailwindCSS and Shadcn UI components.
 
-## Development
+## Setup
 
-Install dependencies:
+### 1. Install dependencies:
 ```bash
 npm install
 ```
+
+### 2. Configure Supabase (for persistent order history)
+
+The application uses Supabase to store order history permanently. Without Supabase, orders will only be saved locally in the browser.
+
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+3. Add your Supabase credentials to `.env`:
+   ```env
+   VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key-here
+   ```
+4. Run the database migration (see `supabase/README.md` for details):
+   - Option A: Use Supabase CLI to run migrations
+   - Option B: Manually run the SQL from `supabase/migrations/20260210_create_orders_table.sql` in the Supabase SQL Editor
+
+For detailed Supabase setup instructions, see [supabase/README.md](supabase/README.md).
+
+**Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (temporary storage).
+
+## Development
 
 Start development server:
 ```bash

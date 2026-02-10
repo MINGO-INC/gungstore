@@ -36,8 +36,8 @@ export function useOrderHistory() {
     const loadOrders = async () => {
       try {
         // Check if Supabase is available before trying to use it
-        if (!isSupabaseAvailable) {
-          console.log('TLCA Register: Supabase not configured, using offline mode.');
+        if (!isSupabaseAvailable || !supabase) {
+          console.warn('TLCA Register: Supabase not configured, using offline mode.');
           setUseOfflineMode(true);
           // Load from localStorage
           const saved = localStorage.getItem(STORAGE_KEY);
@@ -115,7 +115,7 @@ export function useOrderHistory() {
    */
   const addOrder = useCallback(async (order: Order) => {
     try {
-      if (!useOfflineMode) {
+      if (!useOfflineMode && supabase) {
         // Try to save to Supabase
         const { error } = await supabase
           .from('orders')
@@ -167,7 +167,7 @@ export function useOrderHistory() {
    */
   const clearHistory = useCallback(async () => {
     try {
-      if (!useOfflineMode) {
+      if (!useOfflineMode && supabase) {
         // Try to delete all orders from Supabase
         const { error } = await supabase
           .from('orders')
@@ -207,7 +207,7 @@ export function useOrderHistory() {
    */
   const deleteOrder = useCallback(async (id: string) => {
     try {
-      if (!useOfflineMode) {
+      if (!useOfflineMode && supabase) {
         // Try to delete from Supabase
         const { error } = await supabase
           .from('orders')

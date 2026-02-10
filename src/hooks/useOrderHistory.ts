@@ -211,8 +211,8 @@ export function useOrderHistory() {
     return () => {
       window.removeEventListener(STORAGE_EVENT, handleOrdersUpdated);
       // Clean up real-time subscription
-      if (realtimeSubscription) {
-        supabase?.removeChannel(realtimeSubscription);
+      if (realtimeSubscription && supabase) {
+        supabase.removeChannel(realtimeSubscription);
       }
     };
   }, []);

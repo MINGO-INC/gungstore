@@ -55,7 +55,11 @@ This creates an optimized production build in the `dist` folder.
 
 1. Build your application: `npm run build`
 2. Deploy the `dist` folder to your gh-pages branch
-3. The repository includes `.htaccess`, `_headers`, and `.nojekyll` files in the `public` folder that will be copied to `dist` during build to ensure proper MIME types and routing.
+3. The repository includes configuration files in the `public` folder that will be copied to `dist` during build:
+   - `.htaccess` - Ensures proper MIME types for Apache servers
+   - `_headers` - Ensures proper MIME types for Netlify/Cloudflare Pages
+   - `.nojekyll` - Prevents Jekyll processing on GitHub Pages
+   - `404.html` - Handles client-side routing for SPAs (redirects all 404s to index.html)
 
 ### Other Static Hosts (Netlify, Vercel, Cloudflare Pages)
 
@@ -74,6 +78,13 @@ If you're deploying to a custom server:
    - Route all requests to `index.html` for client-side routing
 
 ## Troubleshooting
+
+### 404 Errors on GitHub Pages Routes
+
+If you get a 404 error when navigating directly to routes like `/history` on GitHub Pages:
+1. Ensure the `404.html` file from the `public` folder is included in your deployment
+2. This file handles client-side routing by redirecting to `index.html` while preserving the route
+3. The issue is automatically resolved by the included `404.html` file - just rebuild and redeploy
 
 ### MIME Type Errors
 

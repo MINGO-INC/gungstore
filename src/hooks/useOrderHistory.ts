@@ -23,12 +23,13 @@ export function useOrderHistory() {
         }
       } catch (error) {
         console.error('TLCA Register: Failed to load order history from ledger.', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     // Load initial data
     loadOrders();
-    setIsLoading(false);
 
     // Listen for custom event when orders are updated
     const handleOrdersUpdated = () => {

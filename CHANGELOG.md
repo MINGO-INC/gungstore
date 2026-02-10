@@ -16,10 +16,13 @@
 
 ### 2. Code Cleanup
 **Removed Unused Files**:
-- `src/api/demo.ts` - Unused demo API code (directory removed as it was the only file)
+- `src/api/demo.ts` - Unused demo API code
 - `src/pages/home/Index.tsx` - Unused home page component
 - `src/pages/home/components/Demo.tsx` - Unused demo component
-- Removed empty `src/pages/home/` directory
+
+**Removed Empty Directories**:
+- `src/api/` - Empty after removing demo.ts (was the only file in directory)
+- `src/pages/home/` - Empty after removing unused home page components
 
 **Removed Unused Imports**:
 - `src/components/CartSummary.tsx` - Removed unused `Wallet` icon import from lucide-react

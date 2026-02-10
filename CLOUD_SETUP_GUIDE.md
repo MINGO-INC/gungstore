@@ -60,20 +60,68 @@
 
 ### Step 3: Configure Your App
 
-1. In your gungstore folder, copy the example file:
-   ```bash
-   cp .env.example .env
-   ```
+This step connects your app to YOUR Supabase database by creating a configuration file.
 
-2. Open the `.env` file in a text editor
+#### 3.1. Create the configuration file
 
-3. Replace the placeholder values with YOUR actual values from Step 2:
-   ```env
-   VITE_SUPABASE_URL=https://YOUR-PROJECT-ID.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-very-long-anon-key-here
-   ```
+In your gungstore folder (where you installed the app), run this command:
 
-4. Save the file
+```bash
+cp .env.example .env
+```
+
+This creates a new file called `.env` by copying the example file.
+
+#### 3.2. Open the file in a text editor
+
+**On Windows:**
+- Right-click the `.env` file → Open with → Notepad
+
+**On Mac:**
+- Right-click the `.env` file → Open With → TextEdit
+
+**On Linux:**
+- Use any text editor: `nano .env` or `gedit .env`
+
+#### 3.3. Replace the placeholder values
+
+When you open the `.env` file, you'll see this:
+
+```env
+# Supabase Configuration
+# Get these values from your Supabase project settings
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+```
+
+**You need to replace TWO things:**
+
+1. **Replace `https://your-project-ref.supabase.co`** with your ACTUAL Project URL from Step 2
+2. **Replace `your-anon-key-here`** with your ACTUAL anon key from Step 2
+
+**Example - BEFORE editing:**
+```env
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+```
+
+**Example - AFTER editing (with YOUR values):**
+```env
+VITE_SUPABASE_URL=https://xyzabcdefghijk.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5emFiY2RlZmdoaWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg3NjU0MzIsImV4cCI6MjAxNDM0MTQzMn0.example-signature-here
+```
+
+⚠️ **Important:**
+- Remove the placeholder text completely (don't leave it there!)
+- Copy your ENTIRE URL (starts with `https://` and ends with `.supabase.co`)
+- Copy your ENTIRE anon key (it's very long - that's normal!)
+- Don't add extra spaces or quotes
+- Keep the lines that start with `#` - those are just comments
+
+#### 3.4. Save the file
+
+- In Notepad/TextEdit: Click **File** → **Save**
+- In nano: Press `Ctrl+O`, then `Enter`, then `Ctrl+X`
 
 ### Step 4: Set Up the Database
 
@@ -140,6 +188,37 @@ supabase db push
 ---
 
 ## Troubleshooting
+
+### Help with Step 3 - Configuring the .env file
+
+**Problem:** "I don't know where my API keys are"
+- Go to your Supabase project at supabase.com
+- Click Settings (gear icon) in the bottom left
+- Click "API" in the settings menu
+- You'll see "Project URL" and "Project API keys"
+- Use the **anon public** key (NOT the service_role key)
+
+**Problem:** "The .env file doesn't exist after running cp command"
+- Make sure you're in the gungstore folder (use `cd gungstore`)
+- Try running `ls -la .env` to see if it exists (the dot at the start makes it hidden)
+- On Windows, use File Explorer and enable "Show hidden files"
+
+**Problem:** "I don't see a .env.example file"
+- Make sure you've downloaded/cloned the repository completely
+- Run `ls -la` to see all files
+- The file should be in the root folder of the project
+
+**Problem:** "How do I know if I did it correctly?"
+- Open the `.env` file again
+- Your URL should start with `https://` and end with `.supabase.co`
+- Your anon key should be VERY long (over 100 characters)
+- There should be NO placeholder text like "your-project-ref" or "your-anon-key-here"
+- Each line should look like: `VITE_SUPABASE_URL=https://actual-value-here` (no quotes, no extra spaces)
+
+**Problem:** "It still says offline mode after Step 3"
+- Did you complete Step 4 (database migration)?
+- Did you restart the app after creating the `.env` file?
+- Check for typos in your URL or key
 
 ### I don't see "Real-time subscription active" in the console
 

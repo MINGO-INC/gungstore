@@ -47,11 +47,13 @@ The application uses Supabase to store order history permanently and enable real
    ```bash
    cp .env.example .env
    ```
-3. Add your Supabase credentials to `.env`:
+3. Add your Supabase credentials to `.env` (replace the placeholder values):
    ```env
    VITE_SUPABASE_URL=https://your-project-ref.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key-here
    ```
+   💡 **Need help with this step?** See the detailed explanation in [CLOUD_SETUP_GUIDE.md - Step 3](CLOUD_SETUP_GUIDE.md#step-3-configure-your-app)
+   
 4. Run the database migration:
    - In Supabase dashboard, go to **SQL Editor**
    - Copy and paste the SQL from `supabase/migrations/20260210_create_orders_table.sql`

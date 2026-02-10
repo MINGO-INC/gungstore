@@ -51,7 +51,7 @@ const EmployeePage: React.FC = () => {
 
   const handleCheckout = () => {
     // The CartSummary component handles the data persistence to order history internally
-    // as specified in its task requirements (importing useOrderHistory).
+    // by using the useOrderHistory hook to add the completed order.
     // This callback handles the page reset and visual feedback.
     resetCart();
     setActiveCategory('Long Arms');
@@ -138,6 +138,7 @@ const EmployeePage: React.FC = () => {
         <div className="sticky top-20 p-6 lg:p-8 h-[calc(100vh-80px)]">
           <ScrollArea className="h-full pr-4">
             <CartSummary
+              employeeId={employee.id}
               employeeName={employee.name}
               cartItems={items}
               customerType={customerType}

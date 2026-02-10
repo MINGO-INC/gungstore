@@ -1,18 +1,29 @@
-# MIME Type Error - Solution Guide
+# GitHub Pages Deployment Guide
 
-## Problem
+## Problem 1: MIME Type Error
 
 When accessing the deployed site at https://catarmory.net, you may encounter this error:
 ```
 Loading module from "https://catarmory.net/src/main.tsx" was blocked because of a disallowed MIME type ("application/octet-stream").
 ```
 
-## Root Cause
+### Root Cause
 
 This error occurs when **source files are being served instead of the built application**. The browser is trying to load `/src/main.tsx` directly, which means:
 
 1. The source code directory is being deployed instead of the built `dist` folder
 2. The web server is serving `.tsx` and `.js` files with the wrong MIME type (`application/octet-stream` instead of `application/javascript`)
+
+## Problem 2: 404 Error on Routes
+
+When accessing routes directly (e.g., https://catarmory.net/history), you may see:
+```
+404 - File not found
+```
+
+### Root Cause
+
+GitHub Pages serves static files and doesn't natively support client-side routing used by Single Page Applications (SPAs). When you navigate directly to a route like `/history`, GitHub Pages looks for a physical file at that path, which doesn't exist because routing is handled client-side by React Router.
 
 ## Solution
 
@@ -51,10 +62,13 @@ Just push to the `main` branch and the workflow will handle deployment.
 The build process automatically includes these configuration files in the `dist` folder:
 
 - **`.htaccess`** - For Apache servers (GitHub Pages uses this)
-- **`_headers`** - For Netlify/Cloudflare Pages
+- **`_headers`** - For Netlify/Cloudflare Pages  
 - **`.nojekyll`** - Prevents Jekyll processing on GitHub Pages
+- **`404.html`** - Handles SPA client-side routing by redirecting 404s to index.html
 
-These files ensure JavaScript modules are served with the correct MIME types.
+These files ensure:
+1. JavaScript modules are served with the correct MIME types
+2. Direct navigation to any route (like `/history`) works correctly
 
 ### Step 4: Verify the Deployment
 
@@ -70,8 +84,9 @@ After deploying, verify:
 
 - [ ] Run `npm run build` before deploying
 - [ ] Deploy the `dist` folder (not the repository root)
-- [ ] Ensure `.htaccess`, `_headers`, and `.nojekyll` are in the deployed folder
+- [ ] Ensure `.htaccess`, `_headers`, `.nojekyll`, and `404.html` are in the deployed folder
 - [ ] Verify JavaScript files are served with correct MIME type
+- [ ] Verify direct navigation to routes (like `/history`) works without 404 errors
 - [ ] Clear browser cache if you still see errors after redeploying
 
 ## Additional Notes

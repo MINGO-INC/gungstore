@@ -12,21 +12,21 @@ export function useOrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load orders from localStorage
-  const loadOrders = useCallback(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsedOrders = JSON.parse(saved);
-        setOrders(parsedOrders);
-      }
-    } catch (error) {
-      console.error('TLCA Register: Failed to load order history from ledger.', error);
-    }
-  }, []);
-
-  // Initial load from localStorage
+  // Initial load from localStorage and listen for updates
   useEffect(() => {
+    const loadOrders = () => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsedOrders = JSON.parse(saved);
+          setOrders(parsedOrders);
+        }
+      } catch (error) {
+        console.error('TLCA Register: Failed to load order history from ledger.', error);
+      }
+    };
+
+    // Load initial data
     loadOrders();
     setIsLoading(false);
 
@@ -40,7 +40,7 @@ export function useOrderHistory() {
     return () => {
       window.removeEventListener(STORAGE_EVENT, handleOrdersUpdated);
     };
-  }, [loadOrders]);
+  }, []);
 
   /**
    * Adds a new order to the top of the history list and persists to localStorage.

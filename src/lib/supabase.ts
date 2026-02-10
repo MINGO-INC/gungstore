@@ -11,7 +11,6 @@ const placeholderKey = 'your-anon-key-here';
 // Check if Supabase is properly configured
 // Reject empty values and common placeholders
 const isSupabaseConfigured = supabaseUrl && supabaseAnonKey && 
-  supabaseUrl !== '' && supabaseAnonKey !== '' &&
   supabaseUrl !== placeholderUrl && supabaseAnonKey !== placeholderKey;
 
 // Create Supabase client only if credentials are available

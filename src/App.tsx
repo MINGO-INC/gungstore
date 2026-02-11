@@ -12,7 +12,20 @@ import OrderHistory from "@/pages/OrderHistory";
 const queryClient = new QueryClient();
 
 function AppRoutes() {
-  const { employees } = useEmployees();
+  const { employees, isLoading } = useEmployees();
+  
+  // Wait for employees to load before determining redirect path
+  // This prevents multiple rapid navigations that can trigger the
+  // "Too many calls to Location or History APIs" browser error
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
   
   return (
     <Layout>

@@ -97,13 +97,12 @@ export function useEmployees() {
       slug,
     };
 
-    setEmployees((prevEmployees) => {
-      const updatedEmployees = [...prevEmployees, newEmployee];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
-      return updatedEmployees;
-    });
+    // Update localStorage first
+    const updatedEmployees = [...employees, newEmployee];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
 
-    // Dispatch custom event to notify other components
+    // Dispatch event to trigger state update in all components
+    // This provides a single update path instead of double-updating
     window.dispatchEvent(new Event(STORAGE_EVENT));
 
     return newEmployee;
@@ -113,21 +112,20 @@ export function useEmployees() {
    * Removes an employee by ID
    */
   const removeEmployee = useCallback((id: string) => {
-    setEmployees((prevEmployees) => {
-      const updatedEmployees = prevEmployees.filter((emp) => emp.id !== id);
-      
-      // Prevent removing the last employee
-      if (updatedEmployees.length === 0) {
-        throw new Error('Cannot remove the last employee');
-      }
-      
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
-      return updatedEmployees;
-    });
+    const updatedEmployees = employees.filter((emp) => emp.id !== id);
+    
+    // Prevent removing the last employee
+    if (updatedEmployees.length === 0) {
+      throw new Error('Cannot remove the last employee');
+    }
+    
+    // Update localStorage first
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
 
-    // Dispatch custom event to notify other components
+    // Dispatch event to trigger state update in all components
+    // This provides a single update path instead of double-updating
     window.dispatchEvent(new Event(STORAGE_EVENT));
-  }, []);
+  }, [employees]);
 
   /**
    * Get employee by ID

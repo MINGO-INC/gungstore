@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Trash2, FileText, TrendingUp, Wallet, ShieldCheck, Users } from 'lucide-react';
+import { Search, Filter, Trash2, FileText, TrendingUp, Wallet, ShieldCheck } from 'lucide-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
-import { useEmployees } from '@/hooks/useEmployees';
 import { OrderHistoryTable } from '@/components/OrderHistoryTable';
-import { EmployeeManagementDialog } from '@/components/EmployeeManagementDialog';
+import { EMPLOYEES } from '@/lib/index';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,10 +17,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function OrderHistory() {
   const { orders, clearHistory, deleteOrder, isLoading } = useOrderHistory();
-  const { employees } = useEmployees();
   const [searchQuery, setSearchQuery] = useState('');
   const [employeeFilter, setEmployeeFilter] = useState('all');
-  const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -69,14 +66,6 @@ export default function OrderHistory() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            className="border-primary/20 text-primary hover:bg-primary/5 hover:text-primary"
-            onClick={() => setShowEmployeeDialog(true)}
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Manage Employees
-          </Button>
           <Button 
             variant="outline" 
             className="border-destructive/20 text-destructive hover:bg-destructive/5 hover:text-destructive"
@@ -149,7 +138,7 @@ export default function OrderHistory() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Employees</SelectItem>
-                {employees.map((emp) => (
+                {EMPLOYEES.map((emp) => (
                   <SelectItem key={emp.id} value={emp.id}>
                     {emp.name}
                   </SelectItem>
@@ -198,11 +187,6 @@ export default function OrderHistory() {
           </AnimatePresence>
         </div>
       </div>
-
-      <EmployeeManagementDialog 
-        open={showEmployeeDialog} 
-        onOpenChange={setShowEmployeeDialog}
-      />
     </motion.div>
   );
 }

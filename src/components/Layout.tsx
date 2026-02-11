@@ -1,16 +1,13 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { ClipboardList, Users, Target, ShieldCheck } from 'lucide-react';
-import { ROUTE_PATHS } from '@/lib/index';
-import { useEmployees } from '@/hooks/useEmployees';
+import { ROUTE_PATHS, EMPLOYEES } from '@/lib/index';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { employees } = useEmployees();
-
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md">
@@ -35,7 +32,7 @@ export function Layout({ children }: LayoutProps) {
 
             <nav className="hidden md:flex items-center space-x-1">
               <div className="h-8 w-px bg-border mx-4" />
-              {employees.map((employee) => (
+              {EMPLOYEES.map((employee) => (
                 <NavLink
                   key={employee.id}
                   to={ROUTE_PATHS.EMPLOYEE.replace(':slug', employee.slug)}

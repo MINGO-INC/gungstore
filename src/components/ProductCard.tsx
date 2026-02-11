@@ -49,7 +49,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground px-2 py-0.5 border border-border rounded-full bg-muted/40">
             {product.category}
           </span>
-          <span className="font-mono text-base font-semibold text-secondary-foreground/80">
+          <span className="font-mono text-base font-semibold text-primary">
             ${product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>

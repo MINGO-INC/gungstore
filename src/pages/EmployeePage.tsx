@@ -6,12 +6,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  EMPLOYEES, 
   PRODUCTS, 
   SPECIALS, 
   Product 
 } from '@/lib/index';
 import { useEmployeeCart } from '@/hooks/useEmployeeCart';
+import { useEmployees } from '@/hooks/useEmployees';
 import { ProductCard } from '@/components/ProductCard';
 import { CartSummary } from '@/components/CartSummary';
 import { springPresets } from '@/lib/motion';
@@ -22,7 +22,8 @@ import { springPresets } from '@/lib/motion';
  */
 const EmployeePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const employee = EMPLOYEES.find((e) => e.slug === slug);
+  const { employees } = useEmployees();
+  const employee = employees.find((e) => e.slug === slug);
   
   const {
     items,

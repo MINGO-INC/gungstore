@@ -82,8 +82,12 @@ export function useEmployees() {
 
     const slug = generateSlug(trimmedName);
     
+    // Read current employees from localStorage to avoid stale closure
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const currentEmployees: Employee[] = saved ? JSON.parse(saved) : [];
+    
     // Check if employee with same name or slug already exists
-    const existingEmployee = employees.find(
+    const existingEmployee = currentEmployees.find(
       (emp) => emp.name.toLowerCase() === trimmedName.toLowerCase() || emp.slug === slug
     );
     
@@ -97,35 +101,37 @@ export function useEmployees() {
       slug,
     };
 
-    setEmployees((prevEmployees) => {
-      const updatedEmployees = [...prevEmployees, newEmployee];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
-      return updatedEmployees;
-    });
+    // Update localStorage first
+    const updatedEmployees = [...currentEmployees, newEmployee];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
 
-    // Dispatch custom event to notify other components
+    // Dispatch event to trigger state update in all components
+    // This provides a single update path instead of double-updating
     window.dispatchEvent(new Event(STORAGE_EVENT));
 
     return newEmployee;
-  }, [employees, generateSlug, generateId]);
+  }, [generateSlug, generateId]);
 
   /**
    * Removes an employee by ID
    */
   const removeEmployee = useCallback((id: string) => {
-    setEmployees((prevEmployees) => {
-      const updatedEmployees = prevEmployees.filter((emp) => emp.id !== id);
-      
-      // Prevent removing the last employee
-      if (updatedEmployees.length === 0) {
-        throw new Error('Cannot remove the last employee');
-      }
-      
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
-      return updatedEmployees;
-    });
+    // Read current employees from localStorage to avoid stale closure
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const currentEmployees: Employee[] = saved ? JSON.parse(saved) : [];
+    
+    const updatedEmployees = currentEmployees.filter((emp) => emp.id !== id);
+    
+    // Prevent removing the last employee
+    if (updatedEmployees.length === 0) {
+      throw new Error('Cannot remove the last employee');
+    }
+    
+    // Update localStorage first
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEmployees));
 
-    // Dispatch custom event to notify other components
+    // Dispatch event to trigger state update in all components
+    // This provides a single update path instead of double-updating
     window.dispatchEvent(new Event(STORAGE_EVENT));
   }, []);
 

@@ -102,13 +102,12 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           </div>
           
           <Button 
-  onClick={handleAdd}
-  style={{ backgroundColor: '#0047AB' }}
-  className="w-full hover:opacity-90 text-white font-semibold shadow-sm border-t border-white/10 transition-all active:scale-[0.98] cursor-pointer"
->
-  <ShoppingCart className="mr-2 h-4 w-4" />
-  Add to Cart
-</Button>
+            onClick={handleAdd}
+            className="w-full bg-[oklch(0.75_0.12_85)] hover:bg-[oklch(0.70_0.12_85)] text-white font-semibold shadow-sm border-t border-white/10 transition-all active:scale-[0.98] cursor-pointer"
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Add to Cart
+          </Button>
         </div>
       </div>
       

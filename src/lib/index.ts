@@ -124,6 +124,7 @@ export const PRODUCTS: Product[] = [
 export const SPECIALS: Product[] = [
   { id: 'sp_1', name: 'Exotic Double (Master Crafted)', price: 1200.00, category: 'Specials', description: 'Limited custom-built shotgun.' },
   { id: 'sp_2', name: 'Engraved Rolling Block Rifle', price: 2500.00, category: 'Specials', description: 'Finely engraved long-range rifle.' },
+  { id: 'sp_3', name: 'Superior Bow', price: 100.00, category: 'Specials', description: 'Superior bow.' },
 ];
 
 

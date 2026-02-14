@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Order } from '@/lib/index';
+import { Order, CONSUMABLES } from '@/lib/index';
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { TrendingUp, Package } from 'lucide-react';
+import { TrendingUp, Package, Ammunition, Pistol } from 'lucide-react';
 
 interface BestSellersTableProps {
   orders: Order[];
@@ -26,6 +26,7 @@ interface ProductStats {
 /**
  * Best Sellers Analytics Table
  * Tracks which items are selling best by quantity and revenue.
+ * Divided into separate sections for guns and consumables.
  * © 2026 TLCA Inventory Systems
  */
 export function BestSellersTable({ orders }: BestSellersTableProps) {
@@ -35,7 +36,10 @@ export function BestSellersTable({ orders }: BestSellersTableProps) {
       currency: 'USD',
     }).format(amount);
 
-  const bestSellers = useMemo(() => {
+  // Get consumable product names for filtering
+  const consumableNames = new Set(CONSUMABLES.map(p => p.name));
+
+  const { gunSellers, consumableSellers } = useMemo(() => {
     const productMap = new Map<string, ProductStats>();
 
     // Aggregate all items from all orders
@@ -66,13 +70,124 @@ export function BestSellersTable({ orders }: BestSellersTableProps) {
       }
     });
 
-    // Sort by quantity sold (descending)
-    return Array.from(productMap.values()).sort(
-      (a, b) => b.totalQuantity - a.totalQuantity
-    );
+    const allProducts = Array.from(productMap.values());
+    
+    // Separate into guns and consumables
+    const guns = allProducts
+      .filter(product => !consumableNames.has(product.name))
+      .sort((a, b) => b.totalQuantity - a.totalQuantity);
+    
+    const consumables = allProducts
+      .filter(product => consumableNames.has(product.name))
+      .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+    return {
+      gunSellers: guns,
+      consumableSellers: consumables,
+    };
   }, [orders]);
 
-  if (bestSellers.length === 0) {
+  const renderTable = (
+    sellers: ProductStats[],
+    title: string,
+    icon: React.ReactNode
+  ) => {
+    if (sellers.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-border rounded-xl bg-card/50">
+          <Package className="w-12 h-12 text-muted-foreground/30 mb-4" />
+          <p className="text-muted-foreground font-medium">No {title.toLowerCase()} sales data.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          {icon}
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        </div>
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+          <ScrollArea className="h-[400px] w-full">
+            <Table>
+              <TableHeader className="bg-muted/50">
+                <TableRow>
+                  <TableHead className="font-semibold">
+                    <div className="flex items-center gap-2">
+                      <Package className="w-4 h-4 text-primary" />
+                      <span>Product Name</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    <div className="flex items-center justify-end gap-2">
+                      <TrendingUp className="w-4 h-4 text-primary" />
+                      <span>Units Sold</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    <span>Transactions</span>
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    <span>Avg. Price/Unit</span>
+                  </TableHead>
+                  <TableHead className="text-right font-semibold text-accent-foreground">
+                    <span>Total Revenue</span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sellers.map((product, index) => (
+                  <TableRow key={product.name} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-1 rounded">
+                          #{index + 1}
+                        </span>
+                        {product.name}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-mono font-bold text-lg">
+                      {product.totalQuantity}
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-muted-foreground">
+                      {product.totalSales}
+                    </TableCell>
+                    <TableCell className="text-right font-mono">
+                      {formatCurrency(product.averagePrice)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono font-bold text-accent-foreground">
+                      {formatCurrency(product.totalRevenue)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+          <div className="p-4 border-t border-border bg-muted/20 flex justify-between items-center">
+            <p className="text-xs text-muted-foreground italic">
+              * Products ranked by units sold (quantity)
+            </p>
+            <div className="flex gap-4">
+              <div className="text-right">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Items Sold</p>
+                <p className="text-sm font-mono font-bold">
+                  {sellers.reduce((acc, curr) => acc + curr.totalQuantity, 0)}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Revenue</p>
+                <p className="text-sm font-mono font-bold text-accent-foreground">
+                  {formatCurrency(sellers.reduce((acc, curr) => acc + curr.totalRevenue, 0))}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (gunSellers.length === 0 && consumableSellers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-border rounded-xl bg-card/50">
         <Package className="w-12 h-12 text-muted-foreground/30 mb-4" />
@@ -83,81 +198,18 @@ export function BestSellersTable({ orders }: BestSellersTableProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-      <ScrollArea className="h-[600px] w-full">
-        <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead className="font-semibold">
-                <div className="flex items-center gap-2">
-                  <Package className="w-4 h-4 text-primary" />
-                  <span>Product Name</span>
-                </div>
-              </TableHead>
-              <TableHead className="text-right font-semibold">
-                <div className="flex items-center justify-end gap-2">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                  <span>Units Sold</span>
-                </div>
-              </TableHead>
-              <TableHead className="text-right font-semibold">
-                <span>Transactions</span>
-              </TableHead>
-              <TableHead className="text-right font-semibold">
-                <span>Avg. Price/Unit</span>
-              </TableHead>
-              <TableHead className="text-right font-semibold text-accent-foreground">
-                <span>Total Revenue</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {bestSellers.map((product, index) => (
-              <TableRow key={product.name} className="hover:bg-muted/30 transition-colors">
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-1 rounded">
-                      #{index + 1}
-                    </span>
-                    {product.name}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right font-mono font-bold text-lg">
-                  {product.totalQuantity}
-                </TableCell>
-                <TableCell className="text-right font-mono text-muted-foreground">
-                  {product.totalSales}
-                </TableCell>
-                <TableCell className="text-right font-mono">
-                  {formatCurrency(product.averagePrice)}
-                </TableCell>
-                <TableCell className="text-right font-mono font-bold text-accent-foreground">
-                  {formatCurrency(product.totalRevenue)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </ScrollArea>
-      <div className="p-4 border-t border-border bg-muted/20 flex justify-between items-center">
-        <p className="text-xs text-muted-foreground italic">
-          * Products ranked by units sold (quantity)
-        </p>
-        <div className="flex gap-4">
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Items Sold</p>
-            <p className="text-sm font-mono font-bold">
-              {bestSellers.reduce((acc, curr) => acc + curr.totalQuantity, 0)}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Revenue</p>
-            <p className="text-sm font-mono font-bold text-accent-foreground">
-              {formatCurrency(bestSellers.reduce((acc, curr) => acc + curr.totalRevenue, 0))}
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-8">
+      {renderTable(
+        gunSellers,
+        'Firearms & Weapons',
+        <Pistol className="w-5 h-5 text-primary" />
+      )}
+      
+      {renderTable(
+        consumableSellers,
+        'Consumables',
+        <Ammunition className="w-5 h-5 text-primary" />
+      )}
     </div>
   );
 }

@@ -71,6 +71,7 @@ export const REVOLVERS: Product[] = [
   { id: 'rv_6', name: "Gambler's", price: 370.00, category: 'Revolvers' },
   { id: 'rv_7', name: 'Webley', price: 370.00, category: 'Revolvers' },
   { id: 'rv_8', name: 'Walker', price: 450.00, category: 'Revolvers' },
+  { id: 'rv_9', name: 'Cattleman', price: 5.00, category: 'Revolvers' },
 ];
 
 export const RIFLES: Product[] = [

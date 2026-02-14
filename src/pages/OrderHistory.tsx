@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Trash2, FileText, TrendingUp, Wallet, ShieldCheck } from 'lucide-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { OrderHistoryTable } from '@/components/OrderHistoryTable';
+import { BestSellersTable } from '@/components/BestSellersTable';
 import { EMPLOYEES } from '@/lib/index';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function OrderHistory() {
   const { orders, clearHistory, deleteOrder, isLoading } = useOrderHistory();
@@ -120,72 +122,107 @@ export default function OrderHistory() {
       </div>
 
       <div className="bg-card border border-border rounded-xl p-6 space-y-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by Order ID, Employee, or Customer Type..."
-              className="pl-10 bg-background"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="w-full md:w-64 flex items-center gap-2">
-            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-            <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
-              <SelectTrigger className="bg-background">
-                <SelectValue placeholder="Filter by Employee" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Employees</SelectItem>
-                {EMPLOYEES.map((emp) => (
-                  <SelectItem key={emp.id} value={emp.id}>
-                    {emp.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <Tabs defaultValue="history" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="history">Order History</TabsTrigger>
+            <TabsTrigger value="bestsellers">Best Sellers</TabsTrigger>
+          </TabsList>
 
-        <div className="overflow-hidden">
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <motion.div 
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="h-64 flex items-center justify-center text-muted-foreground"
-              >
-                Fetching ledger entries...
-              </motion.div>
-            ) : filteredOrders.length > 0 ? (
-              <motion.div
-                key="table"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <OrderHistoryTable orders={filteredOrders} onDeleteOrder={deleteOrder} />
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="h-64 flex flex-col items-center justify-center text-center space-y-4 border-2 border-dashed border-muted rounded-lg"
-              >
-                <FileText className="w-12 h-12 text-muted-foreground opacity-20" />
-                <div className="space-y-1">
-                  <p className="text-lg font-medium">No transactions found</p>
-                  <p className="text-sm text-muted-foreground">
-                    The ledger is currently empty for the selected filters.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+          <TabsContent value="history" className="space-y-6 mt-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by Order ID, Employee, or Customer Type..."
+                  className="pl-10 bg-background"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="w-full md:w-64 flex items-center gap-2">
+                <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
+                <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder="Filter by Employee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Employees</SelectItem>
+                    {EMPLOYEES.map((emp) => (
+                      <SelectItem key={emp.id} value={emp.id}>
+                        {emp.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="overflow-hidden">
+              <AnimatePresence mode="wait">
+                {isLoading ? (
+                  <motion.div 
+                    key="loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-64 flex items-center justify-center text-muted-foreground"
+                  >
+                    Fetching ledger entries...
+                  </motion.div>
+                ) : filteredOrders.length > 0 ? (
+                  <motion.div
+                    key="table"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <OrderHistoryTable orders={filteredOrders} onDeleteOrder={deleteOrder} />
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    key="empty"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="h-64 flex flex-col items-center justify-center text-center space-y-4 border-2 border-dashed border-muted rounded-lg"
+                  >
+                    <FileText className="w-12 h-12 text-muted-foreground opacity-20" />
+                    <div className="space-y-1">
+                      <p className="text-lg font-medium">No transactions found</p>
+                      <p className="text-sm text-muted-foreground">
+                        The ledger is currently empty for the selected filters.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="bestsellers" className="space-y-6 mt-6">
+            <div className="overflow-hidden">
+              <AnimatePresence mode="wait">
+                {isLoading ? (
+                  <motion.div 
+                    key="loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-64 flex items-center justify-center text-muted-foreground"
+                  >
+                    Analyzing sales data...
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="bestsellers"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <BestSellersTable orders={orders} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </motion.div>
   );

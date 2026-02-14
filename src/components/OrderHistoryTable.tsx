@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { History, User, CreditCard, DollarSign, Calendar, Trash2 } from 'lucide-react';
+import { History, User, CreditCard, DollarSign, Calendar, Trash2, ChevronDown } from 'lucide-react';
 
 interface OrderHistoryTableProps {
   orders: Order[];
@@ -36,6 +36,7 @@ interface OrderHistoryTableProps {
 export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('en-US', {
@@ -81,6 +82,7 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
+              <TableHead className="w-[40px]"></TableHead>
               <TableHead className="w-[180px] font-semibold">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-primary" />
@@ -112,39 +114,90 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
           </TableHeader>
           <TableBody>
             {orders.map((order) => (
-              <TableRow key={order.id} className="hover:bg-muted/30 transition-colors group">
-                <TableCell className="font-mono text-xs text-muted-foreground">
-                  {formatDate(order.timestamp)}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {order.employeeName}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline" className="font-normal bg-background">
-                    {order.customerType}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right font-mono font-semibold">
-                  {formatCurrency(order.totalAmount)}
-                </TableCell>
-                <TableCell className="text-right font-mono text-accent-foreground">
-                  {formatCurrency(order.totalCommission)}
-                </TableCell>
-                <TableCell className="text-right font-mono font-bold text-secondary bg-secondary/5">
-                  {formatCurrency(order.ledgerAmount)}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => handleDeleteClick(order)}
-                    title="Delete this sale"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <React.Fragment key={order.id}>
+                <TableRow className="hover:bg-muted/30 transition-colors group">
+                  <TableCell className="w-[40px]">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
+                      title="View items in this order"
+                    >
+                      <ChevronDown 
+                        className={`h-4 w-4 transition-transform ${expandedOrderId === order.id ? 'rotate-180' : ''}`}
+                      />
+                    </Button>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs text-muted-foreground">
+                    {formatDate(order.timestamp)}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {order.employeeName}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="font-normal bg-background">
+                      {order.customerType}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right font-mono font-semibold">
+                    {formatCurrency(order.totalAmount)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-accent-foreground">
+                    {formatCurrency(order.totalCommission)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono font-bold text-secondary bg-secondary/5">
+                    {formatCurrency(order.ledgerAmount)}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleDeleteClick(order)}
+                      title="Delete this sale"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                
+                {expandedOrderId === order.id && (
+                  <TableRow className="bg-muted/20 hover:bg-muted/30">
+                    <TableCell colSpan={8} className="py-4">
+                      <div className="space-y-3 pl-4">
+                        <div>
+                          <h4 className="text-sm font-semibold mb-3 text-foreground">Items in this order:</h4>
+                          {order.items && Array.isArray(order.items) && order.items.length > 0 ? (
+                            <div className="space-y-2">
+                              {order.items.map((item: any, idx: number) => (
+                                <div 
+                                  key={idx} 
+                                  className="flex items-center justify-between p-2 bg-background rounded border border-border text-sm"
+                                >
+                                  <div className="flex-1">
+                                    <p className="font-medium text-foreground">{item.name || 'Unknown'}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Qty: {item.quantity} × {formatCurrency(item.unitPrice || 0)}
+                                    </p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-mono font-semibold text-foreground">
+                                      {formatCurrency(item.totalPrice || 0)}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-muted-foreground italic">No items recorded for this order.</p>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { TrendingUp, Package, Ammunition, Pistol } from 'lucide-react';
+import { TrendingUp, Package, Ammunition, Gun } from 'lucide-react';
 
 interface BestSellersTableProps {
   orders: Order[];
@@ -201,8 +201,8 @@ export function BestSellersTable({ orders }: BestSellersTableProps) {
     <div className="space-y-8">
       {renderTable(
         gunSellers,
-        'Firearms & Weapons',
-        <Pistol className="w-5 h-5 text-primary" />
+        'Weapon',
+        <Gun className="w-5 h-5 text-primary" />
       )}
       
       {renderTable(

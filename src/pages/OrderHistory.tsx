@@ -125,7 +125,7 @@ export default function OrderHistory() {
         <Tabs defaultValue="history" className="w-full">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="history">Order History</TabsTrigger>
-            <TabsTrigger value="bestsellers">Best Sellers</TabsTrigger>
+            <TabsTrigger value="bestsellers">Weapon and Consumables</TabsTrigger>
           </TabsList>
 
           <TabsContent value="history" className="space-y-6 mt-6">

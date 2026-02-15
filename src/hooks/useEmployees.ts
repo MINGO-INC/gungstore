@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Employee, EMPLOYEES } from '@/lib/index';
+import { supabase } from '@/lib/supabase';
 
 const STORAGE_KEY = 'tlca_employees_v1';
 const STORAGE_EVENT = 'tlca_employees_updated';
@@ -85,7 +86,7 @@ export function useEmployees() {
     };
   }, [persistEmployees]);
 
-  const addEmployee = useCallback((name: string) => {
+  const addEmployee = useCallback(async (name: string) => {
     const trimmed = name.trim();
     if (!trimmed) return null;
 
@@ -106,6 +107,28 @@ export function useEmployees() {
       persistEmployees(next);
       return next;
     });
+
+    // Persist to database if available
+    if (created && supabase) {
+      try {
+        await supabase.from('employeeasync (employeeId: string) => {
+    setEmployees((prev) => {
+      const next = prev.filter((emp) => emp.id !== employeeId);
+      persistEmployees(next);
+      return next;
+    });
+
+    // Remove from database if available
+    if (supabase) {
+      try {
+        await supabase.from('employees').delete().eq('id', employeeId);
+      } catch (error) {
+        console.error('Failed to remove employee from database:', error);
+      }
+    } catch (error) {
+        console.error('Failed to add employee to database:', error);
+      }
+    }
 
     return created;
   }, [persistEmployees]);

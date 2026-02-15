@@ -19,14 +19,20 @@ import { Employee } from '@/lib/index';
 export default function StaffSettings() {
   const { employees, addEmployee, removeEmployee } = useEmployees();
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [employeeToRemove, setEmployeeToRemove] = useState<Employee | null>(null);
 
-  const handleAddEmployee = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddEmployee = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const created = addEmployee(name);
-    if (created) {
-      setName('');
+    setIsLoading(true);
+    try {
+      const created = await addEmployee(name);
+      if (created) {
+        setName('');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,9 +41,14 @@ export default function StaffSettings() {
     setRemoveDialogOpen(true);
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (employeeToRemove) {
-      removeEmployee(employeeToRemove.id);
+      setIsLoading(true);
+      try {
+        await removeEmployee(employeeToRemove.id);
+      } finally {
+        setIsLoading(false);
+      }
     }
     setRemoveDialogOpen(false);
     setEmployeeToRemove(null);
@@ -77,10 +88,11 @@ export default function StaffSettings() {
                   onChange={(event) => setName(event.target.value)}
                   placeholder="e.g. Jane Doe"
                   className="bg-background"
+                  disabled={isLoading}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Add Staff Member
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Adding...' : 'Add Staff Member'}
               </Button>
             </form>
           </CardContent>
@@ -112,6 +124,7 @@ export default function StaffSettings() {
                     <Button
                       variant="outline"
                       className="border-destructive/30 text-destructive hover:bg-destructive/10"
+                      disabled={isLoading}
                       onClick={() => confirmRemove(employee)}
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
@@ -138,12 +151,13 @@ export default function StaffSettings() {
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogFooter> disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRemove}
+              disabled={isLoading}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {isLoading ? 'Removing...' : 'Remove Staff'}
               Remove Staff
             </AlertDialogAction>
           </AlertDialogFooter>

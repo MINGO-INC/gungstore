@@ -1,13 +1,16 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { ClipboardList, Users, Target, ShieldCheck } from 'lucide-react';
-import { ROUTE_PATHS, EMPLOYEES } from '@/lib/index';
+import { ClipboardList, Users, Target, ShieldCheck, Settings } from 'lucide-react';
+import { ROUTE_PATHS } from '@/lib/index';
+import { useEmployees } from '@/hooks/useEmployees';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
+  const { employees } = useEmployees();
+
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md">
@@ -32,7 +35,12 @@ export function Layout({ children }: LayoutProps) {
 
             <nav className="hidden md:flex items-center space-x-1">
               <div className="h-8 w-px bg-border mx-4" />
-              {EMPLOYEES.map((employee) => (
+              {employees.length === 0 && (
+                <div className="px-4 py-2 text-sm text-muted-foreground italic">
+                  No staff on record
+                </div>
+              )}
+              {employees.map((employee) => (
                 <NavLink
                   key={employee.id}
                   to={ROUTE_PATHS.EMPLOYEE.replace(':slug', employee.slug)}
@@ -64,6 +72,21 @@ export function Layout({ children }: LayoutProps) {
             >
               <ClipboardList className="w-4 h-4" />
               <span className="hidden sm:inline">Order History</span>
+            </NavLink>
+
+            <NavLink
+              to={ROUTE_PATHS.STAFF_SETTINGS}
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all border ${
+                  isActive
+                    ? 'bg-muted text-foreground border-border'
+                    : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'
+                }`
+              }
+              title="Staff settings"
+            >
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">Settings</span>
             </NavLink>
             
             <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border">

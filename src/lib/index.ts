@@ -7,6 +7,7 @@ export const ROUTE_PATHS = {
   HOME: '/',
   ORDER_HISTORY: '/history',
   EMPLOYEE: '/employee/:slug',
+  STAFF_SETTINGS: '/settings',
 };
 
 export interface Product {

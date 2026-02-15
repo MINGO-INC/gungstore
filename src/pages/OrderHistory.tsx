@@ -4,7 +4,7 @@ import { Search, Filter, Trash2, FileText, TrendingUp, Wallet, ShieldCheck } fro
 import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { OrderHistoryTable } from '@/components/OrderHistoryTable';
 import { BestSellersTable } from '@/components/BestSellersTable';
-import { EMPLOYEES } from '@/lib/index';
+import { useEmployees } from '@/hooks/useEmployees';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function OrderHistory() {
   const { orders, clearHistory, deleteOrder, isLoading } = useOrderHistory();
+  const { employees } = useEmployees();
   const [searchQuery, setSearchQuery] = useState('');
   const [employeeFilter, setEmployeeFilter] = useState('all');
 
@@ -147,7 +148,7 @@ export default function OrderHistory() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Employees</SelectItem>
-                    {EMPLOYEES.map((emp) => (
+                    {employees.map((emp) => (
                       <SelectItem key={emp.id} value={emp.id}>
                         {emp.name}
                       </SelectItem>

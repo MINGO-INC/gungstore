@@ -156,26 +156,26 @@ export function useEmployees() {
     const trimmed = name.trim();
     if (!trimmed) return null;
 
-    let created: Employee | null = null;
+    // Create the employee object first, outside of state updater
+    const existingSlugs = new Set(employees.map((emp) => emp.slug));
+    const baseSlug = slugifyName(trimmed);
+    const slug = buildUniqueSlug(baseSlug, existingSlugs);
 
+    const created: Employee = {
+      id: createEmployeeId(),
+      name: trimmed,
+      slug,
+    };
+
+    // Update state with the new employee
     setEmployees((prev) => {
-      const existingSlugs = new Set(prev.map((emp) => emp.slug));
-      const baseSlug = slugifyName(trimmed);
-      const slug = buildUniqueSlug(baseSlug, existingSlugs);
-
-      created = {
-        id: createEmployeeId(),
-        name: trimmed,
-        slug,
-      };
-
       const next = [...prev, created];
       persistEmployees(next);
       return next;
     });
 
-    // Persist to database if available
-    if (created && supabase) {
+    // Persist to database - now we know `created` is definitely defined
+    if (supabase) {
       try {
         await supabase.from('employees').insert({
           id: created.id,
@@ -184,10 +184,13 @@ export function useEmployees() {
         });
       } catch (error) {
         console.error('Failed to add employee to database:', error);
+        // Remove from local state if database insert fails
+        setEmployees((prev) => prev.filter((emp) => emp.id !== created.id));
       }
     }
 
     return created;
+  }, [employees, persistEmployees]);
   }, [persistEmployees]);
 
   const removeEmployee = useCallback(async (employeeId: string) => {

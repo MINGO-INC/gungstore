@@ -111,7 +111,20 @@ export function useEmployees() {
     // Persist to database if available
     if (created && supabase) {
       try {
-        await supabase.from('employeeasync (employeeId: string) => {
+        await supabase.from('employees').insert({
+          id: created.id,
+          name: created.name,
+          slug: created.slug,
+        });
+      } catch (error) {
+        console.error('Failed to add employee to database:', error);
+      }
+    }
+
+    return created;
+  }, [persistEmployees]);
+
+  const removeEmployee = useCallback(async (employeeId: string) => {
     setEmployees((prev) => {
       const next = prev.filter((emp) => emp.id !== employeeId);
       persistEmployees(next);
@@ -125,20 +138,7 @@ export function useEmployees() {
       } catch (error) {
         console.error('Failed to remove employee from database:', error);
       }
-    } catch (error) {
-        console.error('Failed to add employee to database:', error);
-      }
     }
-
-    return created;
-  }, [persistEmployees]);
-
-  const removeEmployee = useCallback((employeeId: string) => {
-    setEmployees((prev) => {
-      const next = prev.filter((emp) => emp.id !== employeeId);
-      persistEmployees(next);
-      return next;
-    });
   }, [persistEmployees]);
 
   const employeesById = useMemo(() => {

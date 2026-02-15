@@ -151,14 +151,14 @@ export default function StaffSettings() {
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter> disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRemove}
               disabled={isLoading}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {isLoading ? 'Removing...' : 'Remove Staff'}
-              Remove Staff
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

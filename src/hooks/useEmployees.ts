@@ -48,6 +48,7 @@ function loadEmployeesFromStorage() {
 
 export function useEmployees() {
   const [employees, setEmployees] = useState<Employee[]>(() => loadEmployeesFromStorage());
+  const [isLoadingFromDB, setIsLoadingFromDB] = useState(true);
 
   const persistEmployees = useCallback((nextEmployees: Employee[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextEmployees));
@@ -55,36 +56,101 @@ export function useEmployees() {
   }, []);
 
   useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key !== STORAGE_KEY) return;
-      if (event.newValue) {
+    // Load employees from database on mount
+    const loadFromDatabase = async () => {
+      if (supabase) {
         try {
-          const parsed = JSON.parse(event.newValue) as Employee[];
-          if (Array.isArray(parsed)) {
-            setEmployees(parsed);
+          const { data, error } = await supabase.from('employees').select('*');
+          if (error) {
+            console.warn('Failed to load employees from database:', error);
+            setIsLoadingFromDB(false);
+            return;
+          }
+          if (data && data.length > 0) {
+            setEmployees(data as Employee[]);
+            persistEmployees(data as Employee[]);
           }
         } catch (error) {
-          console.warn('TLCA Register: Failed to sync staff list.', error);
+          console.warn('Failed to load employees from database:', error);
+        } finally {
+          setIsLoadingFromDB(false);
         }
+      } else {
+        setIsLoadingFromDB(false);
       }
     };
 
-    const handleCustomEvent = () => {
-      setEmployees(loadEmployeesFromStorage());
-    };
+    loadFromDatabase();
 
+    // Subscribe to real-time updates
+    let unsubscribe: (() => void) | null = null;
+    if (supabase) {
+      try {
+        const subscription = supabase
+          .channel('employees_changes')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'employees' },
+            (payload) => {
+              if (payload.eventType === 'INSERT') {
+                setEmployees((prev) => {
+                  const exists = prev.find((e) => e.id === (payload.new as Employee).id);
+                  if (exists) return prev;
+                  const updated = [...prev, payload.new as Employee];
+                  persistEmployees(updated);
+                  return updated;
+                });
+              } else if (payload.eventType === 'DELETE') {
+                setEmployees((prev) => {
+                  const updated = prev.filter((e) => e.id !== (payload.old as Employee).id);
+                  persistEmployees(updated);
+                  return updated;
+                });
+              }
+            }
+          )
+          .subscribe();
+
+        unsubscribe = () => {
+          supabase.removeChannel(subscription);
+        };
+      } catch (error) {
+        console.warn('Failed to subscribe to employee updates:', error);
+      }
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [persistEmployees]);
+
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key !== STORAGE_KEY) return;
+    if (event.newValue) {
+      try {
+        const parsed = JSON.parse(event.newValue) as Employee[];
+        if (Array.isArray(parsed)) {
+          setEmployees(parsed);
+        }
+      } catch (error) {
+        console.warn('TLCA Register: Failed to sync staff list.', error);
+      }
+    }
+  };
+
+  const handleCustomEvent = () => {
+    setEmployees(loadEmployeesFromStorage());
+  };
+
+  useEffect(() => {
     window.addEventListener('storage', handleStorage);
     window.addEventListener(STORAGE_EVENT, handleCustomEvent);
-
-    if (!localStorage.getItem(STORAGE_KEY)) {
-      persistEmployees(loadEmployeesFromStorage());
-    }
 
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener(STORAGE_EVENT, handleCustomEvent);
     };
-  }, [persistEmployees]);
+  }, []);
 
   const addEmployee = useCallback(async (name: string) => {
     const trimmed = name.trim();

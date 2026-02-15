@@ -54,7 +54,7 @@ Created an `orders` table with:
 
 ## Key Features
 
-### Real-time Multi-user Synchronization ⭐ NEW
+### Real-time Multi-user Synchronization (New)
 - When one user adds an order, all other users see it **instantly**
 - When an order is deleted, it's removed from all users' views in real-time
 - When an order is updated, all users see the changes immediately
@@ -146,7 +146,7 @@ CREATE POLICY "Users can only view their own orders" ON orders
 ## Benefits
 
 1. **Data Persistence:** Orders saved permanently, never lost
-2. **Real-time Multi-user Sync:** Teams can collaborate with instant updates ⭐ NEW
+2. **Real-time Multi-user Sync:** Teams can collaborate with instant updates (New)
 3. **Cross-Device Access:** Same data on all devices
 4. **Business Intelligence:** Centralized data for reporting
 5. **Reliability:** Offline fallback ensures uptime
@@ -163,13 +163,13 @@ The application uses Supabase's real-time capabilities through PostgreSQL's repl
 
 2. **Event Flow:**
    ```
-   User Action → Database Change → Postgres Broadcast → Supabase Real-time → All Subscribed Clients
+   User Action -> Database Change -> Postgres Broadcast -> Supabase Real-time -> All Subscribed Clients
    ```
 
 3. **Supported Events:**
-   - **INSERT**: New order added → appears on all users' screens
-   - **DELETE**: Order removed → disappears from all users' screens  
-   - **UPDATE**: Order modified → changes reflected on all users' screens
+   - **INSERT**: New order added -> appears on all users' screens
+   - **DELETE**: Order removed -> disappears from all users' screens
+   - **UPDATE**: Order modified -> changes reflected on all users' screens
 
 4. **Automatic Deduplication:**
    - Prevents the same order from appearing twice
@@ -187,8 +187,8 @@ For existing users with localStorage data:
 ## No Breaking Changes
 
 This implementation:
-- ✅ Maintains all existing functionality
-- ✅ No changes to Order interface
-- ✅ Works without configuration
-- ✅ Backward compatible with localStorage
-- ✅ No user-facing changes required
+- Maintains all existing functionality
+- No changes to Order interface
+- Works without configuration
+- Backward compatible with localStorage
+- No user-facing changes required

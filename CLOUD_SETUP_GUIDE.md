@@ -12,23 +12,23 @@
 
 ## What You Get With Cloud Storage
 
-### ✅ Permanent Storage
+### Permanent Storage
 - Sales data saved forever in PostgreSQL database
 - Come back days, weeks, or months later - your data is still there
 - Never lose data even if you clear browser cache
 
-### ✅ Multi-User Real-Time Sync
+### Multi-User Real-Time Sync
 - 3+ people can use the site at the same time
 - Everyone sees the same order history
 - When one person makes a sale, everyone sees it instantly
 - No page refresh needed!
 
-### ✅ Cross-Device Access
-- Make a sale on your phone → See it on your computer
+### Cross-Device Access
+- Make a sale on your phone -> See it on your computer
 - Access from any browser, any device
 - Same data everywhere
 
-### ✅ Offline Mode
+### Offline Mode
 - App still works without internet
 - Automatically syncs when connection is restored
 
@@ -51,7 +51,7 @@
 
 ### Step 2: Get Your API Keys
 
-1. In your Supabase project, click the ⚙️ **Settings** icon (bottom left)
+1. In your Supabase project, click the **Settings** icon (bottom left)
 2. Click **API** in the settings menu
 3. You'll see two important values:
    - **Project URL** (looks like: `https://abcdefghijk.supabase.co`)
@@ -75,10 +75,10 @@ This creates a new file called `.env` by copying the example file.
 #### 3.2. Open the file in a text editor
 
 **On Windows:**
-- Right-click the `.env` file → Open with → Notepad
+- Right-click the `.env` file -> Open with -> Notepad
 
 **On Mac:**
-- Right-click the `.env` file → Open With → TextEdit
+- Right-click the `.env` file -> Open With -> TextEdit
 
 **On Linux:**
 - Use any text editor: `nano .env` or `gedit .env`
@@ -111,7 +111,7 @@ VITE_SUPABASE_URL=https://xyzabcdefghijk.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5emFiY2RlZmdoaWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg3NjU0MzIsImV4cCI6MjAxNDM0MTQzMn0.example-signature-here
 ```
 
-⚠️ **Important:**
+**Important:**
 - Remove the placeholder text completely (don't leave it there!)
 - Copy your ENTIRE URL (starts with `https://` and ends with `.supabase.co`)
 - Copy your ENTIRE anon key (it's very long - that's normal!)
@@ -120,7 +120,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 
 #### 3.4. Save the file
 
-- In Notepad/TextEdit: Click **File** → **Save**
+- In Notepad/TextEdit: Click **File** -> **Save**
 - In nano: Press `Ctrl+O`, then `Enter`, then `Ctrl+X`
 
 ### Step 4: Set Up the Database
@@ -172,18 +172,18 @@ supabase db push
 1. Make a sale in the app
 2. Close the browser completely
 3. Open browser again and go to the app
-4. ✅ The sale should still be there!
+4. Expected: The sale should still be there.
 
 ### Test 2: Multi-User Test
 1. Open the app in Chrome
 2. Open the app in a different browser (Firefox, Edge, etc.) or incognito window
 3. Make a sale in Chrome
-4. ✅ You should see it appear INSTANTLY in the other browser!
+4. Expected: You should see it appear instantly in the other browser.
 
 ### Test 3: Device Test
 1. Make a sale on your computer
 2. Open the app on your phone
-3. ✅ You should see the same sale!
+3. Expected: You should see the same sale.
 
 ---
 
@@ -239,7 +239,7 @@ supabase db push
 **Check:**
 1. Did you see "Real-time subscription active" in BOTH browsers?
 2. Try refreshing both browsers
-3. Check the Supabase Dashboard → Database → Replication to ensure it's enabled
+3. Check the Supabase Dashboard -> Database -> Replication to ensure it's enabled
 
 ### Still having issues?
 
@@ -252,10 +252,10 @@ supabase db push
 ## Cost
 
 Supabase is **FREE** for small businesses:
-- ✅ 500MB database storage (thousands of orders)
-- ✅ 2GB bandwidth per month
-- ✅ 50,000 monthly active users
-- ✅ Unlimited API requests
+- 500MB database storage (thousands of orders)
+- 2GB bandwidth per month
+- 50,000 monthly active users
+- Unlimited API requests
 
 This is more than enough for most small gun stores!
 
@@ -264,10 +264,10 @@ This is more than enough for most small gun stores!
 ## What Happens If I Don't Set This Up?
 
 The app will still work perfectly fine! But:
-- ❌ Sales only saved in browser localStorage (temporary)
-- ❌ Data lost if browser cache cleared
-- ❌ No multi-user sync
-- ❌ Can't access from different devices
+- Sales only saved in browser localStorage (temporary)
+- Data lost if browser cache cleared
+- No multi-user sync
+- Cannot access from different devices
 
 ---
 
@@ -275,11 +275,11 @@ The app will still work perfectly fine! But:
 
 | Feature | Without Supabase | With Supabase |
 |---------|-----------------|---------------|
-| **Permanent storage** | ❌ Temporary | ✅ Forever |
-| **Survives browser clear** | ❌ No | ✅ Yes |
-| **Multi-user sync** | ❌ No | ✅ Real-time |
-| **Cross-device access** | ❌ No | ✅ Yes |
-| **Works offline** | ✅ Yes | ✅ Yes |
+| **Permanent storage** | Temporary | Forever |
+| **Survives browser clear** | No | Yes |
+| **Multi-user sync** | No | Real-time |
+| **Cross-device access** | No | Yes |
+| **Works offline** | Yes | Yes |
 | **Setup time** | 0 min | 5-10 min |
 | **Cost** | Free | Free |
 

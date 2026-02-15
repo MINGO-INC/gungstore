@@ -3,85 +3,11 @@
 ## Entity Relationship Diagram
 
 ```
-┌─────────────────────────────────┐
-│          EMPLOYEES              │
-├─────────────────────────────────┤
-│ PK  id          TEXT            │
-│     name        TEXT            │
-│ UK  slug        TEXT            │
-│     email       TEXT?           │
-│     phone       TEXT?           │
-│     is_active   BOOLEAN         │
-│     hire_date   DATE?           │
-│     created_at  TIMESTAMPTZ     │
-│     updated_at  TIMESTAMPTZ     │
-└─────────────────────────────────┘
-          │
-          │ employee_id
-          │
-          ▼
-┌─────────────────────────────────┐
-│           ORDERS                │
-├─────────────────────────────────┤
-│ PK  id                TEXT      │
-│ FK  employee_id       TEXT      │
-│     employee_name     TEXT      │
-│     customer_type     TEXT      │
-│     items             JSONB     │
-│     total_amount      DECIMAL   │
-│     total_commission  DECIMAL   │
-│     ledger_amount     DECIMAL   │
-│     timestamp         TEXT      │
-│     created_at        TIMESTAMPTZ│
-│     updated_at        TIMESTAMPTZ│
-└─────────────────────────────────┘
-          │                    ▲
-          │ reference_order_id │
-          ▼                    │
-┌─────────────────────────────────┐
-│   INVENTORY_TRANSACTIONS        │
-├─────────────────────────────────┤
-│ PK  id               UUID       │
-│ FK  product_id       TEXT       │
-│     transaction_type TEXT       │
-│     quantity         INTEGER    │
-│     unit_cost        DECIMAL?   │
-│     total_cost       DECIMAL?   │
-│ FK  reference_order_id TEXT?    │
-│     notes            TEXT?      │
-│     transaction_date TIMESTAMPTZ│
-│     created_by       TEXT?      │
-│     created_at       TIMESTAMPTZ│
-└─────────────────────────────────┘
-          ▲
-          │ product_id
-          │
-┌─────────────────────────────────┐
-│          PRODUCTS               │
-├─────────────────────────────────┤
-│ PK  id             TEXT         │
-│     name           TEXT         │
-│     price          DECIMAL      │
-│     category       TEXT         │
-│     description    TEXT?        │
-│     stock_quantity INTEGER      │
-│     is_active      BOOLEAN      │
-│     is_special     BOOLEAN      │
-│     created_at     TIMESTAMPTZ  │
-│     updated_at     TIMESTAMPTZ  │
-└─────────────────────────────────┘
-
-┌─────────────────────────────────┐
-│    PRODUCT_STOCK_LEVELS (VIEW)  │
-├─────────────────────────────────┤
-│     id              TEXT        │
-│     name            TEXT        │
-│     category        TEXT        │
-│     price           DECIMAL     │
-│     recorded_stock  INTEGER     │
-│     calculated_stock INTEGER    │
-│     is_active       BOOLEAN     │
-└─────────────────────────────────┘
+Entities and relationships:
+- employees (id) -> orders (employee_id)
+- orders (id) -> inventory_transactions (reference_order_id) [optional]
+- products (id) -> inventory_transactions (product_id)
+- product_stock_levels is a view derived from products and inventory_transactions
 ```
 
 ## Tables Overview
@@ -231,7 +157,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE table_name;
 All tables have RLS enabled with development-friendly policies:
 
 ```sql
--- Development Policy (⚠️ INSECURE - FOR DEV ONLY)
+-- Development Policy (WARNING: INSECURE - FOR DEV ONLY)
 CREATE POLICY "Allow all operations" ON table_name
   FOR ALL USING (true) WITH CHECK (true);
 ```
@@ -267,15 +193,15 @@ CREATE POLICY "View own orders" ON orders
 ## Data Relationships
 
 ### Primary Relationships
-1. **EMPLOYEES → ORDERS**: One-to-Many
+1. **EMPLOYEES -> ORDERS**: One-to-Many
    - Each employee can have multiple orders
    - `orders.employee_id` references `employees.id`
 
-2. **PRODUCTS → INVENTORY_TRANSACTIONS**: One-to-Many
+2. **PRODUCTS -> INVENTORY_TRANSACTIONS**: One-to-Many
    - Each product can have multiple transactions
    - `inventory_transactions.product_id` references `products.id`
 
-3. **ORDERS → INVENTORY_TRANSACTIONS**: One-to-Many (Optional)
+3. **ORDERS -> INVENTORY_TRANSACTIONS**: One-to-Many (Optional)
    - Each order can create multiple inventory transactions
    - `inventory_transactions.reference_order_id` references `orders.id`
 

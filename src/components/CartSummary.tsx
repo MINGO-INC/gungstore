@@ -153,7 +153,7 @@ export function CartSummary({
                           {item.name}
                         </span>
                         <span className="text-xs font-mono text-muted-foreground shrink-0">
-                          ×{item.quantity}
+                          x{item.quantity}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">

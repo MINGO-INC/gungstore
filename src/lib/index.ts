@@ -1,6 +1,6 @@
 /**
  * TLCA Gun Register - Core Types and Constants
- * © 2026 TLCA Inventory Systems
+ * (c) 2026 TLCA Inventory Systems
  */
 
 export const ROUTE_PATHS = {
@@ -149,4 +149,3 @@ export const CUSTOMER_TYPES = {
 
 // Business Logic Constants
 export const COMMISSION_RATE = 0.25; // 25% employee commission
-export const LEDGER_RATE = 0.75;     // 75% to ledger

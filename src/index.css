@@ -4,30 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
-==========================================================================
-【AI HANDOVER NOTE】
-1. DESIGN PHILOSOPHY:
-   - Style: 'Frontier Ledger' - A fusion of 19th-century vintage record-keeping and modern SaaS dashboard utility.
-   - Visuals: Tactile surfaces resembling aged parchment and gunmetal steel. Uses high physicality with subtle inner-shadows to mimic stamped metal and pressed paper.
-   - Rationale: The TLCA Gun Register requires a sense of heritage and authority. The Western aesthetic (brass, leather, steel) aligns with the firearm inventory context while maintaining high legibility for sales tracking.
-
-2. TYPOGRAPHY:
-   - Serif (Playfair Display): Used for headers and 'The Register' branding to evoke a vintage ledger feel.
-   - Sans (Inter): Used for UI controls and form inputs for modern accessibility.
-   - Mono (JetBrains Mono): Critical for the 'Commission tracking' and 'Pricing structure' to ensure tabular data alignment and numerical clarity.
-
-3. COLOR SYSTEM:
-   - Primary (Baby Blue): Hue 210. A soft, calming blue tone for primary actions and emphasis. Creates a friendly, approachable atmosphere while maintaining professionalism.
-   - Secondary (Light Blue): Hue 210. Used for structural elements, borders, and sidebar to provide a cohesive blue palette.
-   - Destructive (Oxblood): Hue 25. A deep, dried-blood red for reset actions and critical deletions.
-
-4. USAGE GUIDE:
-   - Layout: Centered container for individual employee sheets to mimic a physical logbook; Full-width for the 'Order History' sheet.
-   - Effects: Use 'shadow-sm' for cards with a 1px border of --border to create a 'stacked paper' effect. The 'Checkout' button features clean blue styling for a modern, professional appearance.
-   - Reset Interaction: When the checkout resets the page, use a fade-out/in transition to simulate 'turning a page'.
-==========================================================================
-*/
 
 :root {
   /* Typography */

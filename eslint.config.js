@@ -23,9 +23,9 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
-      "@typescript-eslint/no-unused-vars": "warn", // 未使用变量降为 warn
-      "@typescript-eslint/no-empty-object-type": "warn", // 空对象类型降为 warn
-      "@typescript-eslint/no-explicit-any": "warn", // any 类型降为 warn
+      "@typescript-eslint/no-unused-vars": "warn", // Downgrade unused vars to warn
+      "@typescript-eslint/no-empty-object-type": "warn", // Downgrade empty object types to warn
+      "@typescript-eslint/no-explicit-any": "warn", // Downgrade explicit any to warn
     },
   }
 );

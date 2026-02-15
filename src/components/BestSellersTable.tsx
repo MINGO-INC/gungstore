@@ -27,7 +27,7 @@ interface ProductStats {
  * Best Sellers Analytics Table
  * Tracks which items are selling best by quantity and revenue.
  * Divided into separate sections for guns and consumables.
- * © 2026 TLCA Inventory Systems
+ * (c) 2026 TLCA Inventory Systems
  */
 export function BestSellersTable({ orders }: BestSellersTableProps) {
   const formatCurrency = (amount: number) =>

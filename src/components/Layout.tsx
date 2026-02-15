@@ -85,8 +85,8 @@ export function Layout({ children }: LayoutProps) {
       <footer className="border-t border-border bg-card py-6 mt-auto">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
-            <span>© 2026 TLCA Gun Register</span>
-            <span className="hidden md:inline">•</span>
+            <span>Copyright 2026 TLCA Gun Register</span>
+            <span className="hidden md:inline">-</span>
             <span>Station Inventory System v2.4.0</span>
           </div>
           <div className="flex items-center gap-6 text-xs font-mono text-muted-foreground uppercase tracking-widest">

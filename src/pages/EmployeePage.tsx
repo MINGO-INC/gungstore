@@ -31,7 +31,6 @@ const EmployeePage: React.FC = () => {
     addToCart,
     removeFromCart,
     resetCart,
-    totals,
   } = useEmployeeCart();
 
   const [activeCategory, setActiveCategory] = useState<string>('Pistols');

@@ -75,7 +75,7 @@ These files ensure:
 After deploying, verify:
 
 1. The URL should load your application (not a file listing)
-2. Opening browser DevTools → Network tab should show:
+2. Opening browser DevTools -> Network tab should show:
    - JavaScript files served as `application/javascript`
    - No errors about MIME types
    - Files loaded from the root (e.g., `/assets/index-abc123.js`), NOT from `/src/`

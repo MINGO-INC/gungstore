@@ -31,7 +31,7 @@ interface OrderHistoryTableProps {
 /**
  * TLCA Gun Register - Order History Ledger
  * Displays completed transactions in a vintage ledger format.
- * © 2026 TLCA Inventory Systems
+ * (c) 2026 TLCA Inventory Systems
  */
 export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -178,7 +178,7 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
                                   <div className="flex-1">
                                     <p className="font-medium text-foreground">{item.name || 'Unknown'}</p>
                                     <p className="text-xs text-muted-foreground">
-                                      Qty: {item.quantity} × {formatCurrency(item.unitPrice || 0)}
+                                      Qty: {item.quantity} x {formatCurrency(item.unitPrice || 0)}
                                     </p>
                                   </div>
                                   <div className="text-right">

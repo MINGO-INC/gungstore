@@ -2,16 +2,16 @@
 
 A Vite + React + TypeScript application with TailwindCSS and Shadcn UI components.
 
-## ⚠️ Important: Cloud Storage Setup
+## Important: Cloud Storage Setup
 
 **Question: "Does this save sales in the cloud so I can see them days later?"**
 
 **Answer: YES, but you need to configure Supabase first!**
 
-- ✅ **With Supabase:** Sales saved permanently in cloud, accessible from anywhere, multi-user real-time sync
-- ❌ **Without Supabase:** Sales only saved in browser (temporary, single-user)
+- **With Supabase:** Sales saved permanently in cloud, accessible from anywhere, multi-user real-time sync
+- **Without Supabase:** Sales only saved in browser (temporary, single-user)
 
-**👉 See [CLOUD_SETUP_GUIDE.md](CLOUD_SETUP_GUIDE.md) for step-by-step setup (5-10 minutes, FREE)**
+**See [CLOUD_SETUP_GUIDE.md](CLOUD_SETUP_GUIDE.md) for step-by-step setup (5-10 minutes, free)**
 
 ---
 
@@ -25,20 +25,20 @@ npm install
 ### 2. Configure Supabase (RECOMMENDED for persistent cloud storage)
 
 **Why you need this:**
-- 💾 Sales data saved permanently (come back days/weeks/months later)
-- 🌐 Multiple users can see the same data in real-time
-- 📱 Access from any device or browser
-- ☁️ Never lose data even if browser cache is cleared
+- Sales data saved permanently (come back days/weeks/months later)
+- Multiple users can see the same data in real-time
+- Access from any device or browser
+- Never lose data even if browser cache is cleared
 
 The application uses Supabase to store order history permanently and enable real-time synchronization across multiple users. Without Supabase, orders will only be saved locally in the browser.
 
 **Benefits of Supabase integration:**
-- 🌐 **Multi-user synchronization**: When one user adds an order, all other users see it in real-time
-- 💾 **Persistent storage**: Orders are saved permanently in the cloud
-- 🔄 **Cross-device access**: Access the same order history from any device
-- 📱 **Offline support**: App continues working offline, syncs when connection is restored
+- **Multi-user synchronization**: When one user adds an order, all other users see it in real-time
+- **Persistent storage**: Orders are saved permanently in the cloud
+- **Cross-device access**: Access the same order history from any device
+- **Offline support**: App continues working offline, syncs when connection is restored
 
-**📖 For detailed step-by-step setup instructions, see [CLOUD_SETUP_GUIDE.md](CLOUD_SETUP_GUIDE.md)**
+**For detailed step-by-step setup instructions, see [CLOUD_SETUP_GUIDE.md](CLOUD_SETUP_GUIDE.md)**
 
 **Quick Setup:**
 
@@ -52,19 +52,19 @@ The application uses Supabase to store order history permanently and enable real
    VITE_SUPABASE_URL=https://your-project-ref.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key-here
    ```
-   💡 **Need help with this step?** See the detailed explanation in [CLOUD_SETUP_GUIDE.md - Step 3](CLOUD_SETUP_GUIDE.md#step-3-configure-your-app)
+   Tip: See the detailed explanation in [CLOUD_SETUP_GUIDE.md - Step 3](CLOUD_SETUP_GUIDE.md#step-3-configure-your-app)
    
 4. **Create the database tables:**
-   - **Quick Start:** Follow the [5-minute setup guide](supabase/QUICK_START.md) 🚀
+   - **Quick Start:** Follow the [5-minute setup guide](supabase/QUICK_START.md)
    - **Detailed Instructions:** See [supabase/README.md](supabase/README.md) for complete documentation
    
    You'll create these tables:
-   - ✅ `orders` - Order history (REQUIRED)
-   - ✅ `products` - 48 pre-loaded firearms & accessories (RECOMMENDED)
-   - ✅ `employees` - 5 staff members (RECOMMENDED)
-   - ✅ `inventory_transactions` - Stock tracking (OPTIONAL)
+   - `orders` - Order history (required)
+   - `products` - 48 pre-loaded firearms and accessories (recommended)
+   - `employees` - 5 staff members (recommended)
+   - `inventory_transactions` - Stock tracking (optional)
 
-**That's it!** Your sales are now saved in the cloud permanently. 🎉
+**That's it!** Your sales are now saved in the cloud permanently.
 
 **Note:** The app will work without Supabase configuration, but order history will only persist in browser localStorage (single-user, temporary storage).
 

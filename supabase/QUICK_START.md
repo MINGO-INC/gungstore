@@ -19,25 +19,25 @@ Copy and paste the content of each migration file below into the SQL Editor and 
 
 #### Migration 1: Orders Table (REQUIRED)
 ```
-📁 File: supabase/migrations/20260210_create_orders_table.sql
+File: supabase/migrations/20260210_create_orders_table.sql
 ```
 This creates the core orders table for tracking all sales transactions.
 
 #### Migration 2: Products Table (RECOMMENDED)
 ```
-📁 File: supabase/migrations/20260210_create_products_table.sql
+File: supabase/migrations/20260210_create_products_table.sql
 ```
 This creates the products table and populates it with 48 firearms and accessories.
 
 #### Migration 3: Employees Table (RECOMMENDED)
 ```
-📁 File: supabase/migrations/20260210_create_employees_table.sql
+File: supabase/migrations/20260210_create_employees_table.sql
 ```
 This creates the employees table and populates it with 5 initial staff members.
 
 #### Migration 4: Inventory Tracking (OPTIONAL)
 ```
-📁 File: supabase/migrations/20260210_create_inventory_table.sql
+File: supabase/migrations/20260210_create_inventory_table.sql
 ```
 This creates advanced inventory tracking for stock management.
 
@@ -47,10 +47,10 @@ After running the migrations:
 
 1. Go to **Table Editor** in Supabase dashboard
 2. You should see these tables:
-   - ✅ `orders`
-   - ✅ `products` (with 48 items)
-   - ✅ `employees` (with 5 people)
-   - ✅ `inventory_transactions` (if you ran migration 4)
+   - `orders`
+   - `products` (with 48 items)
+   - `employees` (with 5 people)
+   - `inventory_transactions` (if you ran migration 4)
 
 3. Click on `products` table to verify it has data
 4. Click on `employees` table to verify it has data
@@ -72,7 +72,7 @@ After running the migrations:
 
 6. Verify your sale appears in the order history
 
-7. Open the Supabase **Table Editor** → `orders` table to see the order in the database
+7. Open the Supabase **Table Editor** -> `orders` table to see the order in the database
 
 8. (Optional) Open the app in another browser tab - add an order in one tab and watch it appear in real-time in the other tab!
 
@@ -97,11 +97,11 @@ After running the migrations:
 - **5 Employees**: Cat, Tom, Rob, Morris, Extra
 
 ### Features Enabled
-- ✅ Real-time synchronization across multiple users
-- ✅ Persistent cloud storage
-- ✅ Row Level Security (development mode)
-- ✅ Automatic timestamps
-- ✅ Database indexes for fast queries
+- Real-time synchronization across multiple users
+- Persistent cloud storage
+- Row Level Security (development mode)
+- Automatic timestamps
+- Database indexes for fast queries
 
 ## Troubleshooting
 
@@ -125,17 +125,17 @@ After running the migrations:
 
 ## Next Steps
 
-- ✅ Database is set up and ready!
-- ✅ Test creating orders and view them in real-time
-- 🔄 Consider updating the app to fetch products from database instead of hardcoded data
-- 🔒 Before going to production, implement proper authentication and security policies
+- Database is set up and ready.
+- Test creating orders and view them in real-time.
+- Consider updating the app to fetch products from database instead of hardcoded data.
+- Before going to production, implement proper authentication and security policies.
 
 ## Need Help?
 
-- 📖 Full documentation: `supabase/README.md`
-- 🌐 Supabase Docs: https://supabase.com/docs
-- 💬 Supabase Discord: https://discord.supabase.com
+- Full documentation: `supabase/README.md`
+- Supabase Docs: https://supabase.com/docs
+- Supabase Discord: https://discord.supabase.com
 
 ---
 
-**That's it! Your gun store database is ready to use.** 🎉
+**That's it! Your gun store database is ready to use.**

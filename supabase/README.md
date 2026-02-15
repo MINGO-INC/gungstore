@@ -114,10 +114,10 @@ Located in `supabase/migrations/`:
 After running the migrations, your database will have:
 
 ### Tables Created
-- ✅ `orders` - Order history with real-time sync
-- ✅ `products` - 48 pre-loaded products across 7 categories
-- ✅ `employees` - 5 pre-loaded employees (Cat, Tom, Rob, Morris, Extra)
-- ✅ `inventory_transactions` - Stock movement tracking
+- `orders` - Order history with real-time sync
+- `products` - 48 pre-loaded products across 7 categories
+- `employees` - 5 pre-loaded employees (Cat, Tom, Rob, Morris, Extra)
+- `inventory_transactions` - Stock movement tracking
 
 ### Initial Data
 - **48 Products** including pistols, revolvers, rifles, shotguns, repeaters, consumables, and specials
@@ -136,14 +136,14 @@ The application uses Supabase real-time subscriptions to synchronize data across
 This enables multiple employees to use the system simultaneously while seeing the same up-to-date information.
 
 **How it works:**
-1. User A adds a new order → saved to Supabase database
+1. User A adds a new order -> saved to Supabase database
 2. Supabase broadcasts the INSERT event to all subscribed clients
 3. User B, C, and D instantly see the new order appear in their history tab
 4. No page refresh required!
 
 ## Security Considerations
 
-⚠️ **IMPORTANT: Development vs Production**
+**IMPORTANT: Development vs Production**
 
 The default migrations use permissive RLS policies for easy development:
 ```sql
@@ -198,8 +198,8 @@ The app currently uses hardcoded data from `/src/lib/index.ts`. To use database 
 
 After setting up the database:
 
-1. ✅ Start the development server: `npm run dev`
-2. ✅ Test order creation - check if orders appear in Supabase Table Editor
-3. ✅ Open app in multiple browser tabs to test real-time sync
-4. 🔄 Consider updating the app to fetch products/employees from database
-5. 🔒 Before production, implement authentication and proper RLS policies
+1. Start the development server: `npm run dev`
+2. Test order creation - check if orders appear in Supabase Table Editor
+3. Open app in multiple browser tabs to test real-time sync
+4. Consider updating the app to fetch products/employees from database
+5. Before production, implement authentication and proper RLS policies

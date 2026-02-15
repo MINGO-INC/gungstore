@@ -191,7 +191,6 @@ export function useEmployees() {
 
     return created;
   }, [employees, persistEmployees]);
-  }, [persistEmployees]);
 
   const removeEmployee = useCallback(async (employeeId: string) => {
     setEmployees((prev) => {

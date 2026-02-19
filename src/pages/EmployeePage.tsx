@@ -5,13 +5,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import {
-  PRODUCTS,
-  SPECIALS,
-  Product,
-} from '@/lib/index';
 import { useEmployeeCart } from '@/hooks/useEmployeeCart';
 import { useEmployees } from '@/hooks/useEmployees';
+import { useProducts } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/ProductCard';
 import { CartSummary } from '@/components/CartSummary';
 import { springPresets } from '@/lib/motion';
@@ -23,6 +19,7 @@ import { springPresets } from '@/lib/motion';
 const EmployeePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { employees } = useEmployees();
+  const { products } = useProducts();
   const employee = employees.find((e) => e.slug === slug);
   
   const {
@@ -36,8 +33,8 @@ const EmployeePage: React.FC = () => {
 
   const [activeCategory, setActiveCategory] = useState<string>('Pistols');
 
-  // Combine regular products and specials for easy filtering
-  const allAvailableProducts = useMemo(() => [...PRODUCTS, ...SPECIALS], []);
+  // Use products from the hook (supports real-time updates from Settings)
+  const allAvailableProducts = useMemo(() => products, [products]);
 
   // Filter products based on active tab
   const filteredProducts = useMemo(() => {

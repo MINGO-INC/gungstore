@@ -79,7 +79,8 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
       <ScrollArea className="h-[600px] w-full">
-        <Table>
+        <div className="overflow-x-auto">
+        <Table className="min-w-[700px]">
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="w-[40px]"></TableHead>
@@ -153,7 +154,7 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       onClick={() => handleDeleteClick(order)}
                       title="Delete this sale"
                     >
@@ -201,12 +202,13 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
             ))}
           </TableBody>
         </Table>
+        </div>
       </ScrollArea>
-      <div className="p-4 border-t border-border bg-muted/20 flex justify-between items-center">
+      <div className="p-4 border-t border-border bg-muted/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <p className="text-xs text-muted-foreground italic">
           * All records are permanent and timestamped for regulatory compliance.
         </p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 shrink-0">
           <div className="text-right">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Volume</p>
             <p className="text-sm font-mono font-bold">

@@ -109,7 +109,8 @@ export function BestSellersTable({ orders }: BestSellersTableProps) {
         </div>
         <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
           <ScrollArea className="h-[400px] w-full">
-            <Table>
+            <div className="overflow-x-auto">
+            <Table className="min-w-[500px]">
               <TableHeader className="bg-muted/50">
                 <TableRow>
                   <TableHead className="font-semibold">
@@ -162,12 +163,13 @@ export function BestSellersTable({ orders }: BestSellersTableProps) {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </ScrollArea>
-          <div className="p-4 border-t border-border bg-muted/20 flex justify-between items-center">
+          <div className="p-4 border-t border-border bg-muted/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <p className="text-xs text-muted-foreground italic">
               * Products ranked by units sold (quantity)
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 shrink-0">
               <div className="text-right">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Items Sold</p>
                 <p className="text-sm font-mono font-bold">

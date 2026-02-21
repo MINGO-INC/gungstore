@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { ClipboardList, Users, Target, ShieldCheck, Settings } from 'lucide-react';
+import { ClipboardList, Users, Target, ShieldCheck, Settings, Menu, X } from 'lucide-react';
 import { ROUTE_PATHS } from '@/lib/index';
 import { useEmployees } from '@/hooks/useEmployees';
 
@@ -10,6 +10,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { employees } = useEmployees();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -59,11 +60,11 @@ export function Layout({ children }: LayoutProps) {
             </nav>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <NavLink
               to={ROUTE_PATHS.ORDER_HISTORY}
               className={({ isActive }) =>
-                `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all border ${ 
+                `flex items-center gap-2 px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-all border ${ 
                   isActive 
                     ? 'bg-secondary text-secondary-foreground border-secondary' 
                     : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -95,11 +96,49 @@ export function Layout({ children }: LayoutProps) {
                 Authorized Access
               </span>
             </div>
+
+            {/* Mobile hamburger menu button */}
+            <button
+              className="md:hidden flex items-center justify-center p-2 rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label="Toggle staff menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile employee navigation panel */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-card/95 backdrop-blur-md px-4 py-3 space-y-1">
+            {employees.length === 0 ? (
+              <div className="px-4 py-2 text-sm text-muted-foreground italic">
+                No staff on record
+              </div>
+            ) : (
+              employees.map((employee) => (
+                <NavLink
+                  key={employee.id}
+                  to={ROUTE_PATHS.EMPLOYEE.replace(':slug', employee.slug)}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-all ${ 
+                      isActive 
+                        ? 'bg-accent text-accent-foreground shadow-sm' 
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    }`
+                  }
+                >
+                  <Users className="w-4 h-4" />
+                  {employee.name}
+                </NavLink>
+              ))
+            )}
+          </div>
+        )}
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-6 sm:py-8">
         <div className="max-w-6xl mx-auto">
           {children}
         </div>
@@ -107,9 +146,9 @@ export function Layout({ children }: LayoutProps) {
 
       <footer className="border-t border-border bg-card py-6 mt-auto">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs font-mono text-muted-foreground text-center sm:text-left">
             <span>Copyright 2026 TLCA Gun Register</span>
-            <span className="hidden md:inline">-</span>
+            <span className="hidden sm:inline">-</span>
             <span>Station Inventory System v2.4.0</span>
           </div>
           <div className="flex items-center gap-6 text-xs font-mono text-muted-foreground uppercase tracking-widest">

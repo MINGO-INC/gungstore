@@ -65,7 +65,7 @@ const EmployeePage: React.FC = () => {
               <Badge variant="outline" className="mb-2 font-mono uppercase tracking-widest text-primary border-primary/30">
                 Authorized Agent
               </Badge>
-              <h1 className="text-4xl font-heading text-foreground">
+              <h1 className="text-2xl sm:text-4xl font-heading text-foreground">
                 {employee.name}'s Register
               </h1>
               <p className="text-muted-foreground font-sans mt-1">
@@ -84,17 +84,19 @@ const EmployeePage: React.FC = () => {
             onValueChange={setActiveCategory}
             className="w-full space-y-8"
           >
-            <TabsList className="bg-muted/50 p-1 border border-border/50">
-              {categories.map((cat) => (
-                <TabsTrigger 
-                  key={cat} 
-                  value={cat} 
-                  className="data-[state=active]:bg-card data-[state=active]:shadow-sm font-medium"
-                >
-                  {cat}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <div className="overflow-x-auto pb-1">
+              <TabsList className="bg-muted/50 p-1 border border-border/50 w-max min-w-full">
+                {categories.map((cat) => (
+                  <TabsTrigger 
+                    key={cat} 
+                    value={cat} 
+                    className="data-[state=active]:bg-card data-[state=active]:shadow-sm font-medium"
+                  >
+                    {cat}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
             <AnimatePresence mode="wait">
               <TabsContent 
@@ -133,8 +135,8 @@ const EmployeePage: React.FC = () => {
 
       {/* Side Ledger / Cart Summary */}
       <aside className="w-full lg:w-[400px] xl:w-[450px] bg-card/30 flex flex-col">
-        <div className="sticky top-20 p-6 lg:p-8 h-[calc(100vh-80px)]">
-          <ScrollArea className="h-full pr-4">
+        <div className="lg:sticky lg:top-20 p-6 lg:p-8 lg:h-[calc(100vh-80px)]">
+          <ScrollArea className="lg:h-full pr-4">
             <CartSummary
               employeeId={employee.id}
               employeeName={employee.name}

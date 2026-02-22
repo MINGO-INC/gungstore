@@ -149,4 +149,4 @@ export const CUSTOMER_TYPES = {
 } as const;
 
 // Business Logic Constants
-export const COMMISSION_RATE = 0.25; // 25% employee commission
+export const COMMISSION_RATE = 0.35; // 35% employee commission

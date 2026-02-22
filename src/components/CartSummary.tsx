@@ -230,7 +230,7 @@ export function CartSummary({
           <div className="flex justify-between items-center text-xs font-semibold uppercase text-accent-foreground">
             <span className="flex items-center gap-1">
               <Gavel className="w-3 h-3" />
-              Commission (25%)
+              Commission (35%)
             </span>
             <span>{formatCurrency(totalCommission)}</span>
           </div>

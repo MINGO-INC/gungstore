@@ -1,0 +1,58 @@
+name: Backup Order History
+
+# Runs automatically every 2 days and can also be triggered manually.
+on:
+  schedule:
+    - cron: '0 0 */2 * *'  # Every 2 days at midnight UTC
+  workflow_dispatch:        # Allow manual trigger from the Actions tab
+
+permissions:
+  contents: write           # Needed to commit the backup file
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch order history from Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "::error::Supabase credentials not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY secrets."
+            exit 1
+          fi
+
+          mkdir -p backups
+
+          # Remove the previous backup so there is always exactly one
+          rm -f backups/order_history_backup.json
+
+          # Download all orders from Supabase REST API, ordered by timestamp descending
+          HTTP_STATUS=$(curl -s -o backups/order_history_backup.json -w "%{http_code}" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Accept: application/json" \
+            "${SUPABASE_URL}/rest/v1/orders?select=*&order=timestamp.desc")
+
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Supabase request failed with HTTP $HTTP_STATUS"
+            cat backups/order_history_backup.json
+            exit 1
+          fi
+
+          RECORD_COUNT=$(jq '. | length' backups/order_history_backup.json)
+
+          echo "Backup complete: $RECORD_COUNT order(s) saved on $(date -u '+%Y-%m-%d %H:%M UTC')"
+
+      - name: Commit backup to repository
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add backups/order_history_backup.json
+          # Only commit if the file changed (avoids empty commits when no new orders)
+          git diff --staged --quiet || git commit -m "chore: automated order history backup [$(date -u '+%Y-%m-%d')]"
+          git push

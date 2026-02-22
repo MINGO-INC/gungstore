@@ -108,8 +108,8 @@ export function OrderHistoryTable({ orders, onDeleteOrder }: OrderHistoryTablePr
                   <span>Total</span>
                 </div>
               </TableHead>
-              <TableHead className="text-right font-semibold text-accent-foreground">Comm. (25%)</TableHead>
-              <TableHead className="text-right font-semibold text-secondary-foreground bg-secondary/5">Ledger (75%)</TableHead>
+              <TableHead className="text-right font-semibold text-accent-foreground">Comm. (35%)</TableHead>
+              <TableHead className="text-right font-semibold text-secondary-foreground bg-secondary/5">Ledger (65%)</TableHead>
               <TableHead className="w-[80px] font-semibold">Actions</TableHead>
             </TableRow>
           </TableHeader>

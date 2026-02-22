@@ -223,7 +223,7 @@ export function CartSummary({
           <div className="flex justify-between items-center text-xs font-semibold uppercase text-muted-foreground">
             <span className="flex items-center gap-1">
               <Landmark className="w-3 h-3" />
-              Ledger (75%)
+              Ledger (65%)
             </span>
             <span>{formatCurrency(ledgerAmount)}</span>
           </div>
@@ -235,8 +235,8 @@ export function CartSummary({
             <span>{formatCurrency(totalCommission)}</span>
           </div>
           <div className="w-full bg-border h-1.5 rounded-full overflow-hidden flex">
-            <div className="h-full bg-secondary" style={{ width: '75%' }} />
-            <div className="h-full bg-primary" style={{ width: '25%' }} />
+            <div className="h-full bg-secondary" style={{ width: '65%' }} />
+            <div className="h-full bg-primary" style={{ width: '35%' }} />
           </div>
         </div>
       </CardContent>

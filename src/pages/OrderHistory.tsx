@@ -99,7 +99,7 @@ export default function OrderHistory() {
 
         <Card className="bg-card border-border shadow-sm overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Ledger Balance (75%)</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Ledger Balance (65%)</CardTitle>
             <ShieldCheck className="w-4 h-4 text-secondary" />
           </CardHeader>
           <CardContent>

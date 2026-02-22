@@ -154,7 +154,7 @@ const EmployeePage: React.FC = () => {
                 Transaction Policy
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                All sales must be logged in the permanent ledger. Employee commissions are calculated at 25% of net profit after discounts. Law & Doc discounts require badge verification.
+                All sales must be logged in the permanent ledger. Employee commissions are calculated at 35% of net profit after discounts. Law & Doc discounts require badge verification.
               </p>
               <div className="pt-2">
                 <div className="flex justify-between text-[10px] font-mono">

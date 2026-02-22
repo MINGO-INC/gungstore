@@ -5,6 +5,31 @@ import type { Json } from '@/lib/database.types';
 
 const STORAGE_KEY = 'tlca_order_history_v1';
 const STORAGE_EVENT = 'tlca_order_history_updated';
+const BACKUP_KEY = 'tlca_order_history_backup_v1';
+const BACKUP_TIMESTAMP_KEY = 'tlca_order_history_backup_ts_v1';
+const BACKUP_INTERVAL_MS = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+
+/**
+ * Creates a local backup of the order history in localStorage.
+ * Replaces any previous backup so there is always exactly one.
+ */
+function performLocalBackup(orders: Order[]): void {
+  localStorage.removeItem(BACKUP_KEY);
+  localStorage.setItem(BACKUP_KEY, JSON.stringify(orders));
+  localStorage.setItem(BACKUP_TIMESTAMP_KEY, Date.now().toString());
+  console.log(`TLCA Register: Order history backup saved (${orders.length} records).`);
+}
+
+/**
+ * Checks whether a new backup is due (every 2 days) and creates one if so.
+ */
+function checkAndPerformBackup(orders: Order[]): void {
+  const lastTs = localStorage.getItem(BACKUP_TIMESTAMP_KEY);
+  const now = Date.now();
+  if (!lastTs || now - parseInt(lastTs, 10) >= BACKUP_INTERVAL_MS) {
+    performLocalBackup(orders);
+  }
+}
 
 /**
  * Safely converts Order items to Json format for database storage
@@ -42,8 +67,9 @@ export function useOrderHistory() {
           // Load from localStorage
           const saved = localStorage.getItem(STORAGE_KEY);
           if (saved) {
-            const parsedOrders = JSON.parse(saved);
+            const parsedOrders: Order[] = JSON.parse(saved);
             setOrders(parsedOrders);
+            checkAndPerformBackup(parsedOrders);
           }
           setIsLoading(false);
           return;
@@ -61,8 +87,9 @@ export function useOrderHistory() {
           // Fallback to localStorage
           const saved = localStorage.getItem(STORAGE_KEY);
           if (saved) {
-            const parsedOrders = JSON.parse(saved);
+            const parsedOrders: Order[] = JSON.parse(saved);
             setOrders(parsedOrders);
+            checkAndPerformBackup(parsedOrders);
           }
         } else {
           // Convert database format to Order format
@@ -80,6 +107,7 @@ export function useOrderHistory() {
           setOrders(formattedOrders);
           // Sync to localStorage as backup
           localStorage.setItem(STORAGE_KEY, JSON.stringify(formattedOrders));
+          checkAndPerformBackup(formattedOrders);
         }
       } catch (error) {
         console.error('TLCA Register: Failed to load order history.', error);
@@ -87,8 +115,9 @@ export function useOrderHistory() {
         // Fallback to localStorage
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-          const parsedOrders = JSON.parse(saved);
+          const parsedOrders: Order[] = JSON.parse(saved);
           setOrders(parsedOrders);
+          checkAndPerformBackup(parsedOrders);
         }
       } finally {
         setIsLoading(false);
@@ -97,6 +126,14 @@ export function useOrderHistory() {
 
     // Load initial data
     loadOrders();
+
+    // Set up a periodic check every hour so long-running sessions still get backed up
+    const backupInterval = setInterval(() => {
+      setOrders(currentOrders => {
+        checkAndPerformBackup(currentOrders);
+        return currentOrders;
+      });
+    }, 60 * 60 * 1000); // 1 hour
 
     // Setup real-time subscription for multi-user synchronization
     let realtimeSubscription: ReturnType<typeof supabase.channel> | null = null;
@@ -209,6 +246,7 @@ export function useOrderHistory() {
     window.addEventListener(STORAGE_EVENT, handleOrdersUpdated);
 
     return () => {
+      clearInterval(backupInterval);
       window.removeEventListener(STORAGE_EVENT, handleOrdersUpdated);
       // Clean up real-time subscription
       if (realtimeSubscription && supabase) {

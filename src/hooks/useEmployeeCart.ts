@@ -40,6 +40,10 @@ export function useEmployeeCart() {
     setCustomerTypeState(typeId);
     setItems((prevItems) =>
       prevItems.map((item) => {
+        if (item.isManualCharge) {
+          return item;
+        }
+
         // Re-calculate based on original product price (stored as unitPrice)
         const type = Object.values(CUSTOMER_TYPES).find((t) => t.id === typeId) || CUSTOMER_TYPES.STANDARD;
         const discountRate = type.discount;
@@ -77,6 +81,24 @@ export function useEmployeeCart() {
     setItems((prev) => prev.filter((item) => item.productId !== productId));
   }, []);
 
+  const addExtraCharge = useCallback((amount: number, label = 'Extra charge') => {
+    if (amount <= 0) return;
+
+    setItems((prev) => [
+      ...prev,
+      {
+        productId: `extra_${crypto.randomUUID()}`,
+        name: label,
+        unitPrice: amount,
+        quantity: 1,
+        discountedPrice: amount,
+        totalPrice: amount,
+        commission: amount * COMMISSION_RATE,
+        isManualCharge: true,
+      },
+    ]);
+  }, []);
+
   const resetCart = useCallback(() => {
     setItems([]);
     setCustomerTypeState('standard');
@@ -87,6 +109,7 @@ export function useEmployeeCart() {
     customerType,
     setCustomerType,
     addToCart,
+    addExtraCharge,
     removeFromCart,
     resetCart,
   };

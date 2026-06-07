@@ -99,7 +99,7 @@ export default function OrderHistory() {
 
         <Card className="bg-card border-border shadow-sm overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Ledger Balance (65%)</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Ledger Balance (70%)</CardTitle>
             <ShieldCheck className="w-4 h-4 text-secondary" />
           </CardHeader>
           <CardContent>
@@ -111,7 +111,7 @@ export default function OrderHistory() {
 
         <Card className="bg-card border-border shadow-sm overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Employee Commissions (35%)</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Employee Commissions (30%)</CardTitle>
             <Wallet className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { OrderItem, CUSTOMER_TYPES, Order } from '@/lib/index';
@@ -27,6 +28,7 @@ import {
   Landmark,
   X,
   ShoppingCart,
+  PlusCircle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
@@ -40,6 +42,7 @@ interface CartSummaryProps {
   onCheckout: () => void;
   onReset: () => void;
   onRemoveItem: (productId: string) => void;
+  onAddExtraCharge: (amount: number) => void;
 }
 
 export function CartSummary({
@@ -51,8 +54,10 @@ export function CartSummary({
   onCheckout,
   onReset,
   onRemoveItem,
+  onAddExtraCharge,
 }: CartSummaryProps) {
   const { addOrder } = useOrderHistory();
+  const [extraAmount, setExtraAmount] = useState('');
   
   const subtotal = cartItems.reduce((acc, item) => acc + (item.unitPrice * item.quantity), 0);
   const totalAmount = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
@@ -85,6 +90,16 @@ export function CartSummary({
 
     addOrder(order);
     onCheckout();
+  };
+
+  const handleAddExtraCharge = () => {
+    const parsedAmount = Number.parseFloat(extraAmount);
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      return;
+    }
+
+    onAddExtraCharge(parsedAmount);
+    setExtraAmount('');
   };
 
   return (
@@ -122,6 +137,33 @@ export function CartSummary({
           </Select>
         </div>
 
+        <div className="space-y-2">
+          <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Add Extra Charge
+          </label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={extraAmount}
+              onChange={(event) => setExtraAmount(event.target.value)}
+              placeholder="0.00"
+              className="font-mono"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              className="shrink-0"
+              onClick={handleAddExtraCharge}
+              disabled={!extraAmount || Number.parseFloat(extraAmount) <= 0}
+            >
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add
+            </Button>
+          </div>
+        </div>
+
         <Separator className="opacity-50" />
 
         {/* Cart Items List */}
@@ -152,6 +194,11 @@ export function CartSummary({
                         <span className="font-medium text-sm text-foreground truncate">
                           {item.name}
                         </span>
+                        {item.isManualCharge && (
+                          <Badge variant="outline" className="text-[10px] px-1 py-0">
+                            Extra
+                          </Badge>
+                        )}
                         <span className="text-xs font-mono text-muted-foreground shrink-0">
                           x{item.quantity}
                         </span>

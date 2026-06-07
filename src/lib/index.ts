@@ -32,6 +32,7 @@ export interface OrderItem {
   discountedPrice: number;
   totalPrice: number;
   commission: number;
+  isManualCharge?: boolean;
 }
 
 export interface Order {

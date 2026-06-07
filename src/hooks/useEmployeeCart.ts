@@ -81,14 +81,14 @@ export function useEmployeeCart() {
     setItems((prev) => prev.filter((item) => item.productId !== productId));
   }, []);
 
-  const addExtraCharge = useCallback((amount: number, name = 'Extra charge') => {
+  const addExtraCharge = useCallback((amount: number, label = 'Extra charge') => {
     if (amount <= 0) return;
 
     setItems((prev) => [
       ...prev,
       {
         productId: `extra_${crypto.randomUUID()}`,
-        name,
+        name: label,
         unitPrice: amount,
         quantity: 1,
         discountedPrice: amount,

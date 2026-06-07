@@ -65,6 +65,8 @@ export function CartSummary({
   const ledgerAmount = totalAmount - totalCommission;
   const totalDiscount = subtotal - totalAmount;
   const itemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const parsedExtraAmount = Number.parseFloat(extraAmount);
+  const isExtraAmountValid = Number.isFinite(parsedExtraAmount) && parsedExtraAmount > 0;
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('en-US', {
@@ -93,12 +95,11 @@ export function CartSummary({
   };
 
   const handleAddExtraCharge = () => {
-    const parsedAmount = Number.parseFloat(extraAmount);
-    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+    if (!isExtraAmountValid) {
       return;
     }
 
-    onAddExtraCharge(parsedAmount);
+    onAddExtraCharge(parsedExtraAmount);
     setExtraAmount('');
   };
 
@@ -156,7 +157,7 @@ export function CartSummary({
               variant="outline"
               className="shrink-0"
               onClick={handleAddExtraCharge}
-              disabled={!extraAmount || Number.parseFloat(extraAmount) <= 0}
+              disabled={!isExtraAmountValid}
             >
               <PlusCircle className="w-4 h-4 mr-2" />
               Add

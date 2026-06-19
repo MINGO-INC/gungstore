@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { ClipboardList, Users, Target, ShieldCheck, Settings, Menu, X } from 'lucide-react';
 import { ROUTE_PATHS } from '@/lib/index';
 import { useEmployees } from '@/hooks/useEmployees';
@@ -11,6 +11,11 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const { employees } = useEmployees();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  React.useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">

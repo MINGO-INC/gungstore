@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import { useEmployeeCart } from '@/hooks/useEmployeeCart';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useProducts } from '@/hooks/useProducts';
@@ -33,20 +35,44 @@ const EmployeePage: React.FC = () => {
   } = useEmployeeCart();
 
   const [activeCategory, setActiveCategory] = useState<string>('Pistols');
+  const [productSearch, setProductSearch] = useState('');
 
   // Use products from the hook (supports real-time updates from Settings)
   const allAvailableProducts = useMemo(() => products, [products]);
 
+  const categoryCounts = useMemo(
+    () =>
+      allAvailableProducts.reduce<Record<string, number>>((acc, product) => {
+        acc[product.category] = (acc[product.category] ?? 0) + 1;
+        return acc;
+      }, {}),
+    [allAvailableProducts]
+  );
+
   // Filter products based on active tab
   const filteredProducts = useMemo(() => {
-    return allAvailableProducts.filter((p) => p.category === activeCategory);
-  }, [allAvailableProducts, activeCategory]);
+    const normalizedSearch = productSearch.trim().toLowerCase();
+    return allAvailableProducts.filter((p) => {
+      if (p.category !== activeCategory) {
+        return false;
+      }
+      if (!normalizedSearch) {
+        return true;
+      }
+      return (
+        p.name.toLowerCase().includes(normalizedSearch) ||
+        p.description?.toLowerCase().includes(normalizedSearch)
+      );
+    });
+  }, [allAvailableProducts, activeCategory, productSearch]);
 
   if (!employee) {
     return <Navigate to="/" replace />;
   }
 
   const categories = ['Pistols', 'Revolvers', 'Rifles', 'Shotguns', 'Repeaters', 'Consumables', 'Specials'];
+  const cartItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const cartTotal = items.reduce((acc, item) => acc + item.totalPrice, 0);
 
   const handleCheckout = () => {
     // The CartSummary component handles the data persistence to order history internally
@@ -80,6 +106,33 @@ const EmployeePage: React.FC = () => {
             </div>
           </header>
 
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-lg border border-border bg-card/70 p-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Cart Items</p>
+              <p className="text-xl font-semibold">{cartItemCount}</p>
+            </div>
+            <div className="rounded-lg border border-border bg-card/70 p-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Running Total</p>
+              <p className="text-xl font-semibold text-primary">
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cartTotal)}
+              </p>
+            </div>
+            <div className="rounded-lg border border-border bg-card/70 p-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Customer Type</p>
+              <p className="text-sm font-semibold capitalize">{customerType.replace('_', ' ')}</p>
+            </div>
+          </div>
+
+          <div className="relative mb-6">
+            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={productSearch}
+              onChange={(event) => setProductSearch(event.target.value)}
+              placeholder={`Search ${activeCategory.toLowerCase()} inventory...`}
+              className="pl-10 bg-card/70"
+            />
+          </div>
+
           <Tabs 
             defaultValue="Pistols" 
             onValueChange={setActiveCategory}
@@ -94,6 +147,9 @@ const EmployeePage: React.FC = () => {
                     className="data-[state=active]:bg-card data-[state=active]:shadow-sm font-medium"
                   >
                     {cat}
+                    <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] font-mono leading-none">
+                      {categoryCounts[cat] ?? 0}
+                    </span>
                   </TabsTrigger>
                 ))}
               </TabsList>

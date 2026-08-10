@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Trash2, FileText, TrendingUp, Wallet, ShieldCheck } from 'lucide-react';
+import { Search, Filter, Trash2, FileText, TrendingUp, Wallet, ShieldCheck, RotateCcw } from 'lucide-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { OrderHistoryTable } from '@/components/OrderHistoryTable';
 import { BestSellersTable } from '@/components/BestSellersTable';
@@ -35,6 +35,7 @@ export default function OrderHistory() {
       return matchesSearch && matchesEmployee;
     });
   }, [orders, searchQuery, employeeFilter]);
+  const hasActiveFilters = searchQuery.trim().length > 0 || employeeFilter !== 'all';
 
   const stats = useMemo(() => {
     return filteredOrders.reduce(
@@ -156,6 +157,24 @@ export default function OrderHistory() {
                   </SelectContent>
                 </Select>
               </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="md:w-auto"
+                disabled={!hasActiveFilters}
+                onClick={() => {
+                  setSearchQuery('');
+                  setEmployeeFilter('all');
+                }}
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset Filters
+              </Button>
+            </div>
+
+            <div className="text-sm text-muted-foreground">
+              Showing <span className="font-semibold text-foreground">{filteredOrders.length}</span>{' '}
+              of <span className="font-semibold text-foreground">{orders.length}</span> orders
             </div>
 
             <div className="overflow-hidden">

@@ -260,6 +260,72 @@ export function useProducts() {
     [persistProducts],
   );
 
+  const updateProduct = useCallback(
+    async (
+      productId: string,
+      name: string,
+      price: number,
+      category: Product['category'],
+      description?: string,
+    ) => {
+      const trimmedName = name.trim();
+      if (!trimmedName || price < 0) return null;
+
+      let previousProducts: Product[] = [];
+      let updatedProduct: Product | null = null;
+
+      setProducts((prev) => {
+        previousProducts = prev;
+        const existing = prev.find((p) => p.id === productId);
+        if (!existing) return prev;
+
+        updatedProduct = {
+          ...existing,
+          name: trimmedName,
+          price,
+          category,
+          description: description?.trim() || undefined,
+        };
+
+        const next = prev.map((p) => (p.id === productId ? updatedProduct! : p));
+        persistProducts(next);
+        return next;
+      });
+
+      if (!updatedProduct) return null;
+
+      if (supabase) {
+        try {
+          const { error } = await supabase
+            .from('products')
+            .update({
+              name: updatedProduct.name,
+              price: updatedProduct.price,
+              category: updatedProduct.category,
+              description: updatedProduct.description ?? null,
+              is_special: updatedProduct.category === 'Specials',
+            })
+            .eq('id', productId);
+
+          if (error) {
+            console.error('Failed to update product in database:', error);
+            setProducts(previousProducts);
+            persistProducts(previousProducts);
+            return null;
+          }
+        } catch (error) {
+          console.error('Failed to update product in database:', error);
+          setProducts(previousProducts);
+          persistProducts(previousProducts);
+          return null;
+        }
+      }
+
+      return updatedProduct;
+    },
+    [persistProducts],
+  );
+
   const regularProducts = useMemo(
     () => products.filter((p) => p.category !== 'Specials'),
     [products],
@@ -276,6 +342,7 @@ export function useProducts() {
     specialProducts,
     addProduct,
     removeProduct,
+    updateProduct,
     isLoadingFromDB,
   };
 }

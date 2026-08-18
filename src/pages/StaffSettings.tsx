@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserPlus, Trash2, Settings, Users, PackagePlus, Package } from 'lucide-react';
+import { UserPlus, Trash2, Settings, Users, PackagePlus, Package, Pencil } from 'lucide-react';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useProducts } from '@/hooks/useProducts';
 import { Button } from '@/components/ui/button';
@@ -44,7 +44,7 @@ export default function StaffSettings() {
   const [employeeToRemove, setEmployeeToRemove] = useState<Employee | null>(null);
 
   // --- Product state ---
-  const { products, addProduct, removeProduct } = useProducts();
+  const { products, addProduct, removeProduct, updateProduct } = useProducts();
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [productCategory, setProductCategory] = useState<Product['category']>('Pistols');
@@ -52,6 +52,12 @@ export default function StaffSettings() {
   const [productLoading, setProductLoading] = useState(false);
   const [removeProductDialogOpen, setRemoveProductDialogOpen] = useState(false);
   const [productToRemove, setProductToRemove] = useState<Product | null>(null);
+  const [editProductDialogOpen, setEditProductDialogOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const [editProductName, setEditProductName] = useState('');
+  const [editProductPrice, setEditProductPrice] = useState('');
+  const [editProductCategory, setEditProductCategory] = useState<Product['category']>('Pistols');
+  const [editProductDescription, setEditProductDescription] = useState('');
   const [filterCategory, setFilterCategory] = useState<Product['category'] | 'All'>('All');
 
   // --- Staff handlers ---
@@ -118,6 +124,43 @@ export default function StaffSettings() {
     }
     setRemoveProductDialogOpen(false);
     setProductToRemove(null);
+  };
+
+  const openEditProduct = (product: Product) => {
+    setProductToEdit(product);
+    setEditProductName(product.name);
+    setEditProductPrice(product.price.toFixed(2));
+    setEditProductCategory(product.category);
+    setEditProductDescription(product.description ?? '');
+    setEditProductDialogOpen(true);
+  };
+
+  const closeEditProductDialog = () => {
+    setEditProductDialogOpen(false);
+    setProductToEdit(null);
+  };
+
+  const handleUpdateProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!productToEdit) return;
+    const price = parseFloat(editProductPrice);
+    if (!editProductName.trim() || isNaN(price) || price < 0) return;
+
+    setProductLoading(true);
+    try {
+      const updated = await updateProduct(
+        productToEdit.id,
+        editProductName,
+        price,
+        editProductCategory,
+        editProductDescription,
+      );
+      if (updated) {
+        closeEditProductDialog();
+      }
+    } finally {
+      setProductLoading(false);
+    }
   };
 
   const filteredProducts =
@@ -350,15 +393,26 @@ export default function StaffSettings() {
                             {product.category} · ${product.price.toFixed(2)}
                           </div>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="shrink-0 border-destructive/30 text-destructive hover:bg-destructive/10"
-                          disabled={productLoading}
-                          onClick={() => confirmRemoveProduct(product)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={productLoading}
+                            onClick={() => openEditProduct(product)}
+                          >
+                            <Pencil className="w-4 h-4 mr-1" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-destructive/30 text-destructive hover:bg-destructive/10"
+                            disabled={productLoading}
+                            onClick={() => confirmRemoveProduct(product)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))
                   )}
@@ -393,6 +447,96 @@ export default function StaffSettings() {
               {staffLoading ? 'Removing...' : 'Remove Staff'}
             </AlertDialogAction>
           </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit product dialog */}
+      <AlertDialog
+        open={editProductDialogOpen}
+        onOpenChange={(open) => {
+          setEditProductDialogOpen(open);
+          if (!open) {
+            setProductToEdit(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Edit Store Item</AlertDialogTitle>
+            <AlertDialogDescription>
+              Update item details without removing it from inventory.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <form onSubmit={handleUpdateProduct} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-widest font-mono text-muted-foreground">
+                Name
+              </label>
+              <Input
+                value={editProductName}
+                onChange={(e) => setEditProductName(e.target.value)}
+                className="bg-background"
+                disabled={productLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-widest font-mono text-muted-foreground">
+                Price ($)
+              </label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                value={editProductPrice}
+                onChange={(e) => setEditProductPrice(e.target.value)}
+                className="bg-background"
+                disabled={productLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-widest font-mono text-muted-foreground">
+                Category
+              </label>
+              <Select
+                value={editProductCategory}
+                onValueChange={(val) => setEditProductCategory(val as Product['category'])}
+                disabled={productLoading}
+              >
+                <SelectTrigger className="bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-widest font-mono text-muted-foreground">
+                Description <span className="normal-case">(optional)</span>
+              </label>
+              <Input
+                value={editProductDescription}
+                onChange={(e) => setEditProductDescription(e.target.value)}
+                className="bg-background"
+                disabled={productLoading}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={productLoading} onClick={closeEditProductDialog}>
+                Cancel
+              </AlertDialogCancel>
+              <Button
+                type="submit"
+                disabled={productLoading || !editProductName.trim() || !editProductPrice}
+              >
+                {productLoading ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </AlertDialogFooter>
+          </form>
         </AlertDialogContent>
       </AlertDialog>
 
